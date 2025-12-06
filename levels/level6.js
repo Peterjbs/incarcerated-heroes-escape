@@ -52,8 +52,10 @@ function initLevel6() {
     `;
     
     // Add slot machine styles
-    const style = document.createElement('style');
-    style.textContent = `
+    if (!document.getElementById('level6-styles')) {
+        const style = document.createElement('style');
+        style.id = 'level6-styles';
+        style.textContent = `
         .slot-reel {
             width: 120px;
             height: 120px;
@@ -102,7 +104,8 @@ function initLevel6() {
             border-color: #e74c3c;
         }
     `;
-    document.head.appendChild(style);
+        document.head.appendChild(style);
+    }
     
     // Trivia questions
     const questions = [

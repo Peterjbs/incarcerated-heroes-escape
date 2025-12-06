@@ -2,6 +2,13 @@
 function initLevel7() {
     const container = document.getElementById('level-7');
     
+    // Cleanup previous intervals and listeners if they exist
+    if (window.level7Data) {
+        if (window.level7Data.timerInterval) clearInterval(window.level7Data.timerInterval);
+        if (window.level7Data.guardInterval) clearInterval(window.level7Data.guardInterval);
+        document.removeEventListener('keydown', handleKeyPress7);
+    }
+    
     container.innerHTML = `
         <div class="level-container">
             <div class="level-header">

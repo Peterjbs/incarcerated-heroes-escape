@@ -45,8 +45,10 @@ function initLevel1() {
     `;
     
     // Add styles for code inputs
-    const style = document.createElement('style');
-    style.textContent = `
+    if (!document.getElementById('level1-styles')) {
+        const style = document.createElement('style');
+        style.id = 'level1-styles';
+        style.textContent = `
         .code-input {
             width: 70px;
             height: 70px;
@@ -106,7 +108,8 @@ function initLevel1() {
             border: 2px solid #e74c3c;
         }
     `;
-    document.head.appendChild(style);
+        document.head.appendChild(style);
+    }
     
     // Auto-focus and auto-advance inputs
     const inputs = container.querySelectorAll('.code-input');

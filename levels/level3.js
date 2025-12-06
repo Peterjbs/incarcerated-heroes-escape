@@ -42,8 +42,10 @@ function initLevel3() {
     `;
     
     // Add grid styles
-    const style = document.createElement('style');
-    style.textContent = `
+    if (!document.getElementById('level3-styles')) {
+        const style = document.createElement('style');
+        style.id = 'level3-styles';
+        style.textContent = `
         .math-grid-row {
             display: flex;
             gap: 5px;
@@ -114,7 +116,8 @@ function initLevel3() {
             cursor: not-allowed;
         }
     `;
-    document.head.appendChild(style);
+        document.head.appendChild(style);
+    }
     
     // Generate puzzle: 3x3 grid with simple equations
     // Format: [num] [op] [num] = [result]
@@ -257,6 +260,17 @@ function placeNumberInGrid3(number) {
     }
 }
 
+function calculateResult3(a, b, operator) {
+    switch(operator) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '×': return a * b;
+        case '*': return a * b;
+        case '/': return a / b;
+        default: return 0;
+    }
+}
+
 function checkGrid3() {
     const data = window.level3Data;
     if (!data) return;
@@ -269,9 +283,9 @@ function checkGrid3() {
     }
     
     // Check each equation
-    const row1Valid = eval(`${data.gridState[0]} ${data.puzzle.operators[0].replace('×', '*')} ${data.gridState[1]}`) === data.gridState[2];
-    const row2Valid = eval(`${data.gridState[3]} ${data.puzzle.operators[1].replace('×', '*')} ${data.gridState[4]}`) === data.gridState[5];
-    const row3Valid = eval(`${data.gridState[6]} ${data.puzzle.operators[2].replace('×', '*')} ${data.gridState[7]}`) === data.gridState[8];
+    const row1Valid = calculateResult3(data.gridState[0], data.gridState[1], data.puzzle.operators[0]) === data.gridState[2];
+    const row2Valid = calculateResult3(data.gridState[3], data.gridState[4], data.puzzle.operators[1]) === data.gridState[5];
+    const row3Valid = calculateResult3(data.gridState[6], data.gridState[7], data.puzzle.operators[2]) === data.gridState[8];
     
     if (row1Valid && row2Valid && row3Valid) {
         document.getElementById('feedback3').innerHTML = 
