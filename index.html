@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incarcerated Heroes: Labyrinth Escape</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <div class="menu-content">
+                <h1 class="game-title">Incarcerated Heroes</h1>
+                <h2 class="game-subtitle">Labyrinth Escape</h2>
+                <p class="game-intro">
+                    You are part of a band of incarcerated heroes trapped in a dystopian labyrinth.
+                    Solve puzzles, crack codes, and navigate treacherous paths to escape back to Earth
+                    and build a new home for humanity.
+                </p>
+                <div class="menu-buttons">
+                    <button onclick="showScreen('level-select')" class="btn btn-primary">Start Game</button>
+                    <button onclick="showScreen('instructions')" class="btn btn-secondary">Instructions</button>
+                    <button onclick="showScreen('credits')" class="btn btn-secondary">Credits</button>
+                    <button onclick="resetProgress()" class="btn btn-danger">Reset Progress</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Select Screen -->
+        <div id="level-select" class="screen">
+            <div class="level-select-content">
+                <h2>Select Your Challenge</h2>
+                <div id="level-grid" class="level-grid">
+                    <!-- Levels will be generated dynamically -->
+                </div>
+                <button onclick="showScreen('main-menu')" class="btn btn-back">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Instructions Screen -->
+        <div id="instructions" class="screen">
+            <div class="instructions-content">
+                <h2>How to Play</h2>
+                <div class="instruction-section">
+                    <h3>Objective</h3>
+                    <p>Complete all 8 puzzle challenges to escape the labyrinth and return to Earth.</p>
+                </div>
+                <div class="instruction-section">
+                    <h3>Game Progression</h3>
+                    <p>Levels unlock sequentially as you complete each puzzle. Your progress is automatically saved.</p>
+                </div>
+                <div class="instruction-section">
+                    <h3>The Challenges</h3>
+                    <ol>
+                        <li><strong>Code Breaker</strong> - Crack the 4-digit security code</li>
+                        <li><strong>Anagram Solver</strong> - Rearrange letters into meaningful words</li>
+                        <li><strong>Math Grid Puzzle</strong> - Complete the mathematical equations</li>
+                        <li><strong>Filtered Match Breaker</strong> - Generate and match code sequences</li>
+                        <li><strong>Grouped Score Breaker</strong> - Find matching patterns in the database</li>
+                        <li><strong>Tactical Trivia Slots</strong> - Answer questions to control your fate</li>
+                        <li><strong>Predator Prey Dungeon</strong> - Navigate the maze while avoiding enemies</li>
+                        <li><strong>Final Synthesis</strong> - Use all your skills for the ultimate escape</li>
+                    </ol>
+                </div>
+                <button onclick="showScreen('main-menu')" class="btn btn-back">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Credits Screen -->
+        <div id="credits" class="screen">
+            <div class="credits-content">
+                <h2>Credits</h2>
+                <div class="credit-item">
+                    <h3>Game Design & Development</h3>
+                    <p>Incarcerated Heroes: Labyrinth Escape</p>
+                </div>
+                <div class="credit-item">
+                    <h3>Special Thanks</h3>
+                    <p>To all puzzle solvers and code breakers</p>
+                </div>
+                <div class="credit-item">
+                    <h3>Version</h3>
+                    <p>1.0.0</p>
+                </div>
+                <button onclick="showScreen('main-menu')" class="btn btn-back">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="victory" class="screen">
+            <div class="victory-content">
+                <h1 class="victory-title">🎉 FREEDOM ACHIEVED! 🎉</h1>
+                <p class="victory-text">
+                    Congratulations, Hero! You have successfully navigated the labyrinth,
+                    solved all puzzles, and escaped to freedom. Earth awaits your return
+                    to build a new home for humanity.
+                </p>
+                <div class="victory-stats" id="victory-stats"></div>
+                <div class="menu-buttons">
+                    <button onclick="showScreen('level-select')" class="btn btn-primary">Review Challenges</button>
+                    <button onclick="showScreen('main-menu')" class="btn btn-secondary">Main Menu</button>
+                    <button onclick="resetAndReplay()" class="btn btn-danger">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Levels (will be loaded dynamically) -->
+        <div id="level-1" class="screen level-screen"></div>
+        <div id="level-2" class="screen level-screen"></div>
+        <div id="level-3" class="screen level-screen"></div>
+        <div id="level-4" class="screen level-screen"></div>
+        <div id="level-5" class="screen level-screen"></div>
+        <div id="level-6" class="screen level-screen"></div>
+        <div id="level-7" class="screen level-screen"></div>
+        <div id="level-8" class="screen level-screen"></div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="levels/level1.js"></script>
+    <script src="levels/level2.js"></script>
+    <script src="levels/level3.js"></script>
+    <script src="levels/level4.js"></script>
+    <script src="levels/level5.js"></script>
+    <script src="levels/level6.js"></script>
+    <script src="levels/level7.js"></script>
+    <script src="levels/level8.js"></script>
+</body>
+</html>
