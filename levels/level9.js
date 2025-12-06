@@ -4,9 +4,7 @@ function initLevel9() {
     
     // Cleanup previous intervals if they exist
     if (window.level9Data) {
-        if (window.level9Data.monitorInterval) clearInterval(window.level9Data.monitorInterval);
         if (window.level9Data.cycleInterval) clearInterval(window.level9Data.cycleInterval);
-        if (window.level9Data.readingInterval) clearInterval(window.level9Data.readingInterval);
     }
     
     container.innerHTML = `
