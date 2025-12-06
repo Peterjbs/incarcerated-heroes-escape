@@ -56,6 +56,13 @@ const GameState = {
             description: "Use all your skills for the ultimate escape",
             completed: false,
             unlocked: false
+        },
+        {
+            id: 9,
+            title: "Vital Signs Monitor",
+            description: "Manage tracking devices and mimic heartbeats",
+            completed: false,
+            unlocked: false
         }
     ],
     currentLevel: null
