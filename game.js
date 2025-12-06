@@ -56,6 +56,13 @@ const GameState = {
             description: "Use all your skills for the ultimate escape",
             completed: false,
             unlocked: false
+        },
+        {
+            id: 9,
+            title: "CCTV Security Breach",
+            description: "Hack the security system and guide your comrade",
+            completed: false,
+            unlocked: false
         }
     ],
     currentLevel: null
