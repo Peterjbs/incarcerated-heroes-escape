@@ -1,0 +1,450 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0f3460;
+    --highlight-color: #e94560;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --text-light: #ecf0f1;
+    --text-dark: #2c3e50;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Screen Management */
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Main Menu */
+.menu-content {
+    text-align: center;
+    max-width: 600px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.game-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--highlight-color), #ff6b9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+}
+
+.game-subtitle {
+    font-size: 1.8rem;
+    color: var(--text-light);
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.game-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Buttons */
+.btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--highlight-color), #ff6b9d);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(233, 69, 96, 0.4);
+}
+
+.btn-secondary {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #1a5490;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: rgba(231, 76, 60, 0.8);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: rgba(231, 76, 60, 1);
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    margin-top: 20px;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Level Select */
+.level-select-content {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+}
+
+.level-select-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+.level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.level-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 30px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.level-card:hover:not(.locked) {
+    transform: translateY(-5px);
+    border-color: var(--highlight-color);
+    box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+}
+
+.level-card.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.level-card.completed {
+    border-color: var(--success-color);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.level-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--highlight-color);
+    margin-bottom: 10px;
+}
+
+.level-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.level-description {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+.level-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+}
+
+/* Instructions & Credits */
+.instructions-content,
+.credits-content {
+    max-width: 800px;
+    width: 100%;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instructions-content h2,
+.credits-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+    color: var(--highlight-color);
+}
+
+.instruction-section,
+.credit-item {
+    margin-bottom: 30px;
+}
+
+.instruction-section h3,
+.credit-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--highlight-color);
+}
+
+.instruction-section p,
+.credit-item p {
+    line-height: 1.8;
+    opacity: 0.9;
+}
+
+.instruction-section ol {
+    padding-left: 20px;
+    line-height: 2;
+}
+
+.instruction-section li {
+    margin-bottom: 10px;
+}
+
+/* Victory Screen */
+.victory-content {
+    text-align: center;
+    max-width: 700px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--success-color);
+}
+
+.victory-title {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, var(--success-color), #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.victory-text {
+    font-size: 1.2rem;
+    line-height: 2;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.victory-stats {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 30px;
+}
+
+/* Level Screens */
+.level-screen {
+    width: 100%;
+    padding: 20px;
+}
+
+.level-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+}
+
+.level-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.level-header h2 {
+    font-size: 2.5rem;
+    color: var(--highlight-color);
+    margin-bottom: 10px;
+}
+
+.level-narrative {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--highlight-color);
+    margin-bottom: 30px;
+    font-style: italic;
+    line-height: 1.8;
+}
+
+.puzzle-container {
+    margin-bottom: 30px;
+}
+
+.level-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+
+    .game-subtitle {
+        font-size: 1.4rem;
+    }
+
+    .level-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .menu-content,
+    .instructions-content,
+    .credits-content,
+    .victory-content {
+        padding: 20px;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
