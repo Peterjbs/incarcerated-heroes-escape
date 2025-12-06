@@ -4,27 +4,30 @@ A dystopian web-based puzzle adventure game where you play as a band of incarcer
 
 ## 🌟 Game Overview
 
-**Incarcerated Heroes: Labyrinth Escape** is a browser-based puzzle game featuring 8 unique challenges that test your code-breaking, pattern recognition, logic, and reflexes. Each level presents a different type of puzzle that you must complete to unlock the next chamber and ultimately escape the labyrinth.
+**Incarcerated Heroes: Labyrinth Escape** is a browser-based puzzle game featuring 9 unique challenges that test your code-breaking, pattern recognition, logic, navigation skills, and reflexes. Each level presents a different type of puzzle that you must complete to unlock the next chamber and ultimately escape the labyrinth.
 
 ## 🎯 Features
 
-- **8 Unique Puzzle Levels**: Each with its own mechanics and challenge type
+- **9 Unique Puzzle Levels**: Each with its own mechanics and challenge type
 - **Progressive Difficulty**: Levels unlock sequentially as you complete each challenge
+- **Interactive Mazes**: Navigate through pathfinding challenges with moving enemies
+- **Gate Control Mechanics**: Strategic gate locking/unlocking in the final level
 - **Auto-Save Progress**: Your game progress is automatically saved in your browser
 - **Responsive Design**: Play on desktop or mobile devices
 - **Immersive Narrative**: Story elements guide you through your escape
 - **Victory Screen**: Celebrate your achievement upon completing all levels
 
-## 🕹️ The 8 Levels
+## 🕹️ The 9 Levels
 
 1. **Code Breaker** - Crack a 4-digit security code with limited attempts
 2. **Anagram Solver** - Rearrange scrambled letters into adjective-noun pairs
-3. **Math Grid Puzzle** - Arrange numbers to complete mathematical equations
-4. **Filtered Match Breaker** - Generate and match 16-character security codes
-5. **Grouped Score Breaker** - Find matching patterns in database records
-6. **Tactical Trivia Slots** - Answer trivia questions to align slot machine reels
-7. **Predator Prey Dungeon** - Navigate a maze while avoiding patrolling guards
-8. **Final Synthesis** - A multi-stage challenge combining all your learned skills
+3. **9-Number Grid** - Arrange numbers 1-9 to form a magic square (all rows, columns, and diagonals sum to 15)
+4. **Advanced Code Breaker** - Crack a 6-digit code with a timer and enhanced feedback
+5. **Jiggy Puzzle** - Solve a sliding tile puzzle (arrange tiles 1-15 in order)
+6. **Map Navigation** - Navigate a grid-based map, collect keys, and reach the exit
+7. **Pathfinder Challenge** - Navigate a maze while avoiding moving enemies
+8. **Pathfinder Extreme** - Advanced pathfinding with checkpoints and faster enemies
+9. **Gate Master Maze** - Control gates to guide comrades and trap enemies in the final escape
 
 ## 🚀 How to Play
 
@@ -86,12 +89,13 @@ incarcerated-heroes-escape/
 ├── levels/            # Individual level implementations
 │   ├── level1.js      # Code Breaker
 │   ├── level2.js      # Anagram Solver
-│   ├── level3.js      # Math Grid Puzzle
-│   ├── level4.js      # Filtered Match Breaker
-│   ├── level5.js      # Grouped Score Breaker
-│   ├── level6.js      # Tactical Trivia Slots
-│   ├── level7.js      # Predator Prey Dungeon
-│   └── level8.js      # Final Synthesis
+│   ├── level3.js      # 9-Number Grid (Magic Square)
+│   ├── level4.js      # Advanced Code Breaker
+│   ├── level5.js      # Jiggy Puzzle (Sliding Tiles)
+│   ├── level6.js      # Map Navigation
+│   ├── level7.js      # Pathfinder Challenge
+│   ├── level8.js      # Pathfinder Extreme
+│   └── level9.js      # Gate Master Maze
 └── README.md          # This file
 ```
 
@@ -138,12 +142,13 @@ This project is open source and available under the MIT License.
 
 - **Level 1**: Pay attention to the feedback symbols (✓ = correct position, ~ = wrong position, ✗ = not in code)
 - **Level 2**: The hint reveals the individual words if you're stuck
-- **Level 3**: Start by finding combinations that work for the simpler operations
-- **Level 4**: Use the pattern hint to determine which character types to include
-- **Level 5**: Look for patterns with the same structure (XXX-NNN format)
-- **Level 6**: You need to align all three reels with matching symbols
-- **Level 7**: Take your time and learn the guard patrol patterns
-- **Level 8**: Each stage tests a skill from previous levels - stay focused!
+- **Level 3**: In a magic square, the center cell should contain 5. Try placing it there first!
+- **Level 4**: The enhanced feedback shows how many digits are in correct vs wrong positions
+- **Level 5**: Look for patterns - try to get the first row correct, then work on subsequent rows
+- **Level 6**: Plan your route to collect all keys before heading to the exit
+- **Level 7**: Watch the enemy patrol patterns and time your movements carefully
+- **Level 8**: Collect checkpoints in any order, but plan an efficient route to minimize enemy encounters
+- **Level 9**: Use gates strategically to trap enemies and create safe paths for your comrades
 
 ## 🐛 Known Issues
 
