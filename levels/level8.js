@@ -1,307 +1,352 @@
-// Level 8: Final Synthesis - Combining elements from all puzzles
+// Level 8: Pathfinder Extreme - Advanced pathfinding with multiple objectives
 function initLevel8() {
     const container = document.getElementById('level-8');
+    
+    // Cleanup previous state
+    if (window.level8Data) {
+        if (window.level8Data.timerInterval) clearInterval(window.level8Data.timerInterval);
+        if (window.level8Data.enemyInterval) clearInterval(window.level8Data.enemyInterval);
+        if (window.level8Data.keyHandler) {
+            document.removeEventListener('keydown', window.level8Data.keyHandler);
+        }
+    }
     
     container.innerHTML = `
         <div class="level-container">
             <div class="level-header">
-                <h2>Level 8: Final Synthesis</h2>
-                <p>The ultimate challenge - prove your mastery of all skills</p>
+                <h2>Level 8: Pathfinder Extreme</h2>
+                <p>The ultimate pathfinding challenge with checkpoints and faster enemies</p>
             </div>
             
             <div class="level-narrative">
-                This is it, hero. The final door to freedom stands before you. 
-                It requires mastery of all the skills you've learned: code-breaking, 
-                pattern recognition, logic, and quick thinking. Complete this challenge 
-                to secure your escape and return home to Earth!
+                This is the penultimate test. Navigate through an extreme maze, 
+                collect all checkpoints in order, and avoid faster, smarter enemies. 
+                Only the most skilled navigators will succeed!
             </div>
             
             <div class="puzzle-container">
                 <div style="text-align: center;">
-                    <div id="synthesis-stage" style="min-height: 400px; padding: 30px;">
-                        <!-- Dynamic content will be loaded here -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 1.1rem; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                            <span>Time: <span id="timer8">0</span>s</span>
+                            <span>Checkpoints: <span id="checkpoints8" style="color: #f39c12;">0</span>/4</span>
+                            <span>Attempts: <span id="attempts8" style="color: #e74c3c;">0</span></span>
+                        </div>
                     </div>
+                    
+                    <canvas id="maze-canvas8" width="700" height="700" 
+                            style="border: 3px solid var(--highlight-color); border-radius: 10px; 
+                                   background: rgba(0, 0, 0, 0.5); max-width: 100%; display: block; margin: 0 auto;"></canvas>
                     
                     <div id="feedback8" style="min-height: 40px; margin: 20px 0; font-size: 1.1rem;"></div>
                     
-                    <div style="margin-top: 20px;">
-                        <div style="font-size: 1.1rem; margin-bottom: 10px;">Overall Progress:</div>
-                        <div style="background: rgba(255,255,255,0.1); height: 30px; border-radius: 15px; overflow: hidden; max-width: 500px; margin: 0 auto;">
-                            <div id="overall-progress" style="background: linear-gradient(90deg, var(--highlight-color), #2ecc71); height: 100%; width: 0%; transition: width 0.5s ease;"></div>
+                    <div style="margin: 20px 0;">
+                        <div style="margin-bottom: 10px;">Controls: Arrow Keys or WASD</div>
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="movePlayer8('up')" class="btn btn-secondary" style="padding: 8px 16px;">↑ W</button>
+                            <div style="width: 100%; display: flex; gap: 10px; justify-content: center;">
+                                <button onclick="movePlayer8('left')" class="btn btn-secondary" style="padding: 8px 16px;">← A</button>
+                                <button onclick="movePlayer8('down')" class="btn btn-secondary" style="padding: 8px 16px;">↓ S</button>
+                                <button onclick="movePlayer8('right')" class="btn btn-secondary" style="padding: 8px 16px;">→ D</button>
+                            </div>
                         </div>
-                        <div id="progress-text" style="margin-top: 10px; font-size: 1rem; opacity: 0.8;">Stage 1 of 4</div>
+                    </div>
+                    
+                    <div style="margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; max-width: 500px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-around; font-size: 0.9rem;">
+                            <div><span style="color: #3498db;">●</span> Player</div>
+                            <div><span style="color: #e74c3c;">●</span> Enemy</div>
+                            <div><span style="color: #f39c12;">★</span> Checkpoint</div>
+                            <div><span style="color: #2ecc71;">★</span> Exit</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="level-controls" id="level8-controls">
+            <div class="level-controls">
+                <button onclick="initLevel8()" class="btn btn-secondary">Restart Level</button>
                 <button onclick="showScreen('level-select')" class="btn btn-back">Back to Levels</button>
             </div>
         </div>
     `;
     
+    // Initialize maze data
+    const cellSize = 35;
+    const gridSize = 20;
+    
     window.level8Data = {
-        currentStage: 0,
-        stages: [
-            { name: 'Code Breaking', completed: false },
-            { name: 'Pattern Matching', completed: false },
-            { name: 'Math Challenge', completed: false },
-            { name: 'Memory Test', completed: false }
-        ]
+        cellSize,
+        gridSize,
+        playerPos: { x: 1, y: 1 },
+        exitPos: { x: 18, y: 18 },
+        checkpoints: [
+            { x: 5, y: 5, collected: false },
+            { x: 15, y: 5, collected: false },
+            { x: 5, y: 15, collected: false },
+            { x: 10, y: 10, collected: false }
+        ],
+        enemies: [
+            { x: 8, y: 3, dx: 1, dy: 0 },
+            { x: 12, y: 8, dx: 0, dy: 1 },
+            { x: 16, y: 12, dx: -1, dy: 0 },
+            { x: 4, y: 16, dx: 0, dy: -1 },
+            { x: 10, y: 5, dx: 1, dy: 1 },
+            { x: 6, y: 12, dx: -1, dy: 1 }
+        ],
+        walls: generateMazeWalls8(gridSize),
+        attempts: 0,
+        checkpointsCollected: 0,
+        startTime: Date.now(),
+        timerInterval: null,
+        enemyInterval: null,
+        keyHandler: null
     };
     
-    startStage8(0);
+    setupCanvas8();
+    renderMaze8();
+    
+    // Start enemy movement (faster than level 7)
+    window.level8Data.enemyInterval = setInterval(() => {
+        moveEnemies8();
+        checkCollision8();
+    }, 200);
+    
+    // Start timer
+    window.level8Data.timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - window.level8Data.startTime) / 1000);
+        document.getElementById('timer8').textContent = elapsed;
+    }, 1000);
+    
+    // Keyboard controls
+    const keyHandler = (e) => {
+        const key = e.key.toLowerCase();
+        if (['arrowup', 'w'].includes(key)) {
+            e.preventDefault();
+            movePlayer8('up');
+        } else if (['arrowdown', 's'].includes(key)) {
+            e.preventDefault();
+            movePlayer8('down');
+        } else if (['arrowleft', 'a'].includes(key)) {
+            e.preventDefault();
+            movePlayer8('left');
+        } else if (['arrowright', 'd'].includes(key)) {
+            e.preventDefault();
+            movePlayer8('right');
+        }
+    };
+    
+    document.addEventListener('keydown', keyHandler);
+    window.level8Data.keyHandler = keyHandler;
 }
 
-function startStage8(stageIndex) {
+function generateMazeWalls8(size) {
+    const walls = new Set();
+    
+    // Add border walls
+    for (let i = 0; i < size; i++) {
+        walls.add(`0,${i}`);
+        walls.add(`${size-1},${i}`);
+        walls.add(`${i},0`);
+        walls.add(`${i},${size-1}`);
+    }
+    
+    // Add more complex interior walls
+    for (let x = 2; x < size - 2; x += 3) {
+        for (let y = 1; y < size - 1; y++) {
+            if ((y % 5) !== 2) walls.add(`${x},${y}`);
+        }
+    }
+    
+    for (let y = 2; y < size - 2; y += 3) {
+        for (let x = 1; x < size - 1; x++) {
+            if ((x % 5) !== 3) walls.add(`${x},${y}`);
+        }
+    }
+    
+    return walls;
+}
+
+function setupCanvas8() {
+    const canvas = document.getElementById('maze-canvas8');
     const data = window.level8Data;
-    data.currentStage = stageIndex;
-    
-    const progress = (stageIndex / data.stages.length) * 100;
-    document.getElementById('overall-progress').style.width = progress + '%';
-    document.getElementById('progress-text').textContent = `Stage ${stageIndex + 1} of ${data.stages.length}`;
-    
-    switch (stageIndex) {
-        case 0:
-            renderCodeStage8();
-            break;
-        case 1:
-            renderPatternStage8();
-            break;
-        case 2:
-            renderMathStage8();
-            break;
-        case 3:
-            renderMemoryStage8();
-            break;
-        default:
-            handleFinalVictory8();
-    }
+    canvas.width = data.cellSize * data.gridSize;
+    canvas.height = data.cellSize * data.gridSize;
 }
 
-function renderCodeStage8() {
-    const stage = document.getElementById('synthesis-stage');
-    const code = Math.floor(1000 + Math.random() * 9000);
+function renderMaze8() {
+    const canvas = document.getElementById('maze-canvas8');
+    const ctx = canvas.getContext('2d');
+    const data = window.level8Data;
     
-    window.level8Data.stageData = { code };
+    // Clear canvas
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    stage.innerHTML = `
-        <h3 style="margin-bottom: 20px; color: var(--highlight-color);">Stage 1: Code Breaking</h3>
-        <p style="margin-bottom: 20px;">Enter the 4-digit code: <span style="color: #f39c12; font-size: 1.3rem;">${code}</span></p>
-        
-        <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
-            <input type="number" id="stage1-input" class="code-input" style="width: 300px; padding: 15px; font-size: 1.5rem; text-align: center;" 
-                   placeholder="Enter code" maxlength="4" />
-        </div>
-        
-        <button onclick="checkCodeStage8()" class="btn btn-primary">Submit Code</button>
-    `;
-    
-    document.getElementById('stage1-input').focus();
-    document.getElementById('stage1-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkCodeStage8();
+    // Draw walls
+    ctx.fillStyle = '#654321';
+    data.walls.forEach(wallKey => {
+        const [x, y] = wallKey.split(',').map(Number);
+        ctx.fillRect(x * data.cellSize, y * data.cellSize, data.cellSize, data.cellSize);
     });
-}
-
-function checkCodeStage8() {
-    const input = document.getElementById('stage1-input').value;
-    const correct = window.level8Data.stageData.code.toString();
     
-    if (input === correct) {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #2ecc71; font-size: 1.3rem;">✓ Code Correct!</span>';
-        window.level8Data.stages[0].completed = true;
-        setTimeout(() => {
-            document.getElementById('feedback8').innerHTML = '';
-            startStage8(1);
-        }, 1500);
-    } else {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #e74c3c;">Incorrect code. Try again!</span>';
-    }
-}
-
-function renderPatternStage8() {
-    const stage = document.getElementById('synthesis-stage');
-    
-    const patterns = ['ABAB', 'XXYY', 'ABCD', 'AAAA'];
-    const correct = patterns[Math.floor(Math.random() * patterns.length)];
-    const scrambled = correct.split('').sort(() => Math.random() - 0.5).join('');
-    
-    window.level8Data.stageData = { correct };
-    
-    stage.innerHTML = `
-        <h3 style="margin-bottom: 20px; color: var(--highlight-color);">Stage 2: Pattern Matching</h3>
-        <p style="margin-bottom: 20px;">Unscramble this pattern: <span style="color: #f39c12; font-size: 1.5rem; letter-spacing: 5px;">${scrambled}</span></p>
-        <p style="margin-bottom: 20px; opacity: 0.7;">Hint: Find the repeating pattern</p>
-        
-        <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
-            <input type="text" id="stage2-input" style="width: 300px; padding: 15px; font-size: 1.5rem; text-align: center; 
-                                                        text-transform: uppercase; background: rgba(255,255,255,0.1); color: white; 
-                                                        border: 2px solid rgba(255,255,255,0.3); border-radius: 8px;" 
-                   placeholder="Enter pattern" maxlength="4" />
-        </div>
-        
-        <button onclick="checkPatternStage8()" class="btn btn-primary">Submit Pattern</button>
-    `;
-    
-    document.getElementById('stage2-input').focus();
-    document.getElementById('stage2-input').addEventListener('input', (e) => {
-        e.target.value = e.target.value.toUpperCase();
+    // Draw checkpoints
+    data.checkpoints.forEach((cp, index) => {
+        if (!cp.collected) {
+            ctx.fillStyle = '#f39c12';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(
+                '★',
+                cp.x * data.cellSize + data.cellSize / 2,
+                cp.y * data.cellSize + data.cellSize / 2
+            );
+        }
     });
-    document.getElementById('stage2-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkPatternStage8();
+    
+    // Draw exit
+    const allCheckpointsCollected = data.checkpoints.every(cp => cp.collected);
+    ctx.fillStyle = allCheckpointsCollected ? '#2ecc71' : '#e74c3c';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+        '★',
+        data.exitPos.x * data.cellSize + data.cellSize / 2,
+        data.exitPos.y * data.cellSize + data.cellSize / 2
+    );
+    
+    // Draw enemies
+    ctx.fillStyle = '#e74c3c';
+    data.enemies.forEach(enemy => {
+        ctx.beginPath();
+        ctx.arc(
+            enemy.x * data.cellSize + data.cellSize / 2,
+            enemy.y * data.cellSize + data.cellSize / 2,
+            data.cellSize / 2 - 2,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
     });
+    
+    // Draw player
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.arc(
+        data.playerPos.x * data.cellSize + data.cellSize / 2,
+        data.playerPos.y * data.cellSize + data.cellSize / 2,
+        data.cellSize / 2 - 2,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
 }
 
-function checkPatternStage8() {
-    const input = document.getElementById('stage2-input').value.toUpperCase();
-    const correct = window.level8Data.stageData.correct;
+function movePlayer8(direction) {
+    const data = window.level8Data;
+    let newX = data.playerPos.x;
+    let newY = data.playerPos.y;
     
-    if (input === correct) {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #2ecc71; font-size: 1.3rem;">✓ Pattern Correct!</span>';
-        window.level8Data.stages[1].completed = true;
-        setTimeout(() => {
-            document.getElementById('feedback8').innerHTML = '';
-            startStage8(2);
-        }, 1500);
-    } else {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #e74c3c;">Incorrect pattern. Try again!</span>';
-    }
-}
-
-function renderMathStage8() {
-    const stage = document.getElementById('synthesis-stage');
+    if (direction === 'up') newY--;
+    else if (direction === 'down') newY++;
+    else if (direction === 'left') newX--;
+    else if (direction === 'right') newX++;
     
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    const c = Math.floor(Math.random() * 5) + 1;
-    const answer = a * b + c;
+    // Check if wall
+    if (data.walls.has(`${newX},${newY}`)) return;
     
-    window.level8Data.stageData = { answer };
+    // Move player
+    data.playerPos = { x: newX, y: newY };
     
-    stage.innerHTML = `
-        <h3 style="margin-bottom: 20px; color: var(--highlight-color);">Stage 3: Math Challenge</h3>
-        <p style="margin-bottom: 20px;">Solve this equation:</p>
-        <p style="font-size: 2rem; margin: 30px 0; color: var(--highlight-color);">${a} × ${b} + ${c} = ?</p>
-        
-        <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
-            <input type="number" id="stage3-input" style="width: 200px; padding: 15px; font-size: 1.5rem; text-align: center; 
-                                                          background: rgba(255,255,255,0.1); color: white; 
-                                                          border: 2px solid rgba(255,255,255,0.3); border-radius: 8px;" 
-                   placeholder="Answer" />
-        </div>
-        
-        <button onclick="checkMathStage8()" class="btn btn-primary">Submit Answer</button>
-    `;
-    
-    document.getElementById('stage3-input').focus();
-    document.getElementById('stage3-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkMathStage8();
+    // Check if collected a checkpoint
+    data.checkpoints.forEach((cp, index) => {
+        if (!cp.collected && cp.x === newX && cp.y === newY) {
+            cp.collected = true;
+            data.checkpointsCollected++;
+            document.getElementById('checkpoints8').textContent = data.checkpointsCollected;
+            document.getElementById('feedback8').innerHTML = 
+                `<span style="color: #f39c12;">★ Checkpoint ${data.checkpointsCollected}/4 collected!</span>`;
+            setTimeout(() => document.getElementById('feedback8').innerHTML = '', 1500);
+        }
     });
-}
-
-function checkMathStage8() {
-    const input = parseInt(document.getElementById('stage3-input').value);
-    const correct = window.level8Data.stageData.answer;
     
-    if (input === correct) {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #2ecc71; font-size: 1.3rem;">✓ Math Correct!</span>';
-        window.level8Data.stages[2].completed = true;
-        setTimeout(() => {
-            document.getElementById('feedback8').innerHTML = '';
-            startStage8(3);
-        }, 1500);
-    } else {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #e74c3c;">Incorrect answer. Try again!</span>';
-    }
-}
-
-function renderMemoryStage8() {
-    const stage = document.getElementById('synthesis-stage');
-    
-    const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 10));
-    
-    window.level8Data.stageData = { sequence, revealed: true };
-    
-    stage.innerHTML = `
-        <h3 style="margin-bottom: 20px; color: var(--highlight-color);">Stage 4: Memory Test</h3>
-        <p style="margin-bottom: 20px;">Memorize this sequence:</p>
-        <div id="sequence-display" style="font-size: 3rem; margin: 30px 0; letter-spacing: 15px; color: #2ecc71;">
-            ${sequence.join(' ')}
-        </div>
-        <p id="memory-instruction" style="margin-bottom: 20px;">The sequence will disappear in 5 seconds...</p>
+    // Check if reached exit
+    if (newX === data.exitPos.x && newY === data.exitPos.y) {
+        const allCheckpointsCollected = data.checkpoints.every(cp => cp.collected);
         
-        <div id="memory-input" style="display: none;">
-            <input type="text" id="stage4-input" style="width: 300px; padding: 15px; font-size: 1.5rem; text-align: center; 
-                                                          letter-spacing: 10px; background: rgba(255,255,255,0.1); color: white; 
-                                                          border: 2px solid rgba(255,255,255,0.3); border-radius: 8px;" 
-                   placeholder="Enter sequence" maxlength="5" />
-            <br><br>
-            <button onclick="checkMemoryStage8()" class="btn btn-primary">Submit Sequence</button>
-        </div>
-    `;
-    
-    // Hide sequence after 5 seconds
-    setTimeout(() => {
-        document.getElementById('sequence-display').textContent = '? ? ? ? ?';
-        document.getElementById('memory-instruction').textContent = 'Enter the sequence you memorized:';
-        document.getElementById('memory-input').style.display = 'block';
-        document.getElementById('stage4-input').focus();
-        
-        document.getElementById('stage4-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkMemoryStage8();
-        });
-    }, 5000);
-}
-
-function checkMemoryStage8() {
-    const input = document.getElementById('stage4-input').value.replace(/\s/g, '');
-    const correct = window.level8Data.stageData.sequence.join('');
-    
-    if (input === correct) {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #2ecc71; font-size: 1.3rem;">✓ Memory Perfect!</span>';
-        window.level8Data.stages[3].completed = true;
-        setTimeout(() => {
-            handleFinalVictory8();
-        }, 1500);
-    } else {
-        document.getElementById('feedback8').innerHTML = 
-            '<span style="color: #e74c3c;">Incorrect sequence. The correct answer was: ' + correct + '</span>';
-        setTimeout(() => {
-            renderMemoryStage8();
-        }, 2000);
+        if (allCheckpointsCollected) {
+            clearInterval(data.timerInterval);
+            clearInterval(data.enemyInterval);
+            const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
+            
+            document.getElementById('feedback8').innerHTML = 
+                `<span style="color: #2ecc71; font-size: 1.5rem;">✓ Level Complete in ${elapsed}s with ${data.attempts} attempts!</span>`;
+            
+            setTimeout(() => completeLevel(8), 2000);
+        } else {
+            document.getElementById('feedback8').innerHTML = 
+                `<span style="color: #e74c3c;">Collect all checkpoints first! (${data.checkpointsCollected}/4)</span>`;
+            setTimeout(() => document.getElementById('feedback8').innerHTML = '', 2000);
+        }
+        return;
     }
+    
+    checkCollision8();
+    renderMaze8();
 }
 
-function handleFinalVictory8() {
-    const stage = document.getElementById('synthesis-stage');
+function moveEnemies8() {
+    const data = window.level8Data;
     
-    document.getElementById('overall-progress').style.width = '100%';
-    document.getElementById('progress-text').textContent = 'All Stages Complete!';
+    data.enemies.forEach(enemy => {
+        const newX = enemy.x + enemy.dx;
+        const newY = enemy.y + enemy.dy;
+        
+        // Check if hitting wall or boundary
+        if (data.walls.has(`${newX},${newY}`)) {
+            // Try to turn randomly
+            const directions = [
+                { dx: 1, dy: 0 }, { dx: -1, dy: 0 },
+                { dx: 0, dy: 1 }, { dx: 0, dy: -1 }
+            ];
+            const randomDir = directions[Math.floor(Math.random() * directions.length)];
+            
+            if (!data.walls.has(`${enemy.x + randomDir.dx},${enemy.y + randomDir.dy}`)) {
+                enemy.dx = randomDir.dx;
+                enemy.dy = randomDir.dy;
+                enemy.x += enemy.dx;
+                enemy.y += enemy.dy;
+            } else {
+                // Reverse direction
+                enemy.dx = -enemy.dx;
+                enemy.dy = -enemy.dy;
+            }
+        } else {
+            enemy.x = newX;
+            enemy.y = newY;
+        }
+    });
     
-    stage.innerHTML = `
-        <div style="text-align: center; padding: 40px;">
-            <h2 style="font-size: 2.5rem; color: #2ecc71; margin-bottom: 20px;">
-                🎉 SYNTHESIS COMPLETE! 🎉
-            </h2>
-            <p style="font-size: 1.3rem; line-height: 2; margin: 20px 0;">
-                You have proven your mastery of all skills!<br>
-                Code-breaking ✓<br>
-                Pattern Recognition ✓<br>
-                Mathematical Logic ✓<br>
-                Memory Retention ✓
-            </p>
-            <p style="font-size: 1.5rem; margin-top: 30px; color: var(--highlight-color);">
-                The final door opens before you...
-            </p>
-        </div>
-    `;
+    renderMaze8();
+}
+
+function checkCollision8() {
+    const data = window.level8Data;
     
-    setTimeout(() => completeLevel(8), 3000);
+    // Check if player collides with any enemy
+    const collision = data.enemies.some(enemy => 
+        enemy.x === data.playerPos.x && enemy.y === data.playerPos.y
+    );
+    
+    if (collision) {
+        clearInterval(data.timerInterval);
+        clearInterval(data.enemyInterval);
+        data.attempts++;
+        document.getElementById('attempts8').textContent = data.attempts;
+        document.getElementById('feedback8').innerHTML = 
+            '<span style="color: #e74c3c; font-size: 1.3rem;">💥 Caught by enemy! Restarting...</span>';
+        
+        setTimeout(() => initLevel8(), 1500);
+    }
 }
