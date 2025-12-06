@@ -7,7 +7,7 @@ function initLevel2() {
         { scrambled: 'RKDA ESRFTO', answer: 'DARK FOREST', adjective: 'DARK', noun: 'FOREST' },
         { scrambled: 'DIHNDE OODR', answer: 'HIDDEN DOOR', adjective: 'HIDDEN', noun: 'DOOR' },
         { scrambled: 'TCESER TAPH', answer: 'SECRET PATH', adjective: 'SECRET', noun: 'PATH' },
-        { scrambled: 'CEINTA KLOCEFDB', answer: 'ANCIENT LOCK', adjective: 'ANCIENT', noun: 'LOCK' }
+        { scrambled: 'CEINTA KCOL', answer: 'ANCIENT LOCK', adjective: 'ANCIENT', noun: 'LOCK' }
     ];
     
     let currentPairIndex = 0;
