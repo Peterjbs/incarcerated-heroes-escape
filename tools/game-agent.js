@@ -171,7 +171,6 @@ function isEnglishWord(s) {
 }
 
 function enumerateVariants(puzzle) {
-  const t = transforms(puzzle.target);
   const variants = [];
   const tFns = transforms(puzzle.target);
   const names = Object.keys(tFns);
@@ -207,7 +206,11 @@ function run() {
   const report = {timestamp: new Date().toISOString(), puzzles: []};
   for (const p of puzzles) {
     const play = scorePlayability(p);
-    const variants = enumerateVariants(p).map(v => ({ name: v.name, uniqueLetters: flatten(v.target).filter(Boolean).length, playability: scorePlayability({target:v.target, prefilled: p.prefilled}).score }));
+    const variants = enumerateVariants(p).map(v => {
+      const uniqueLetters = flatten(v.target).filter(Boolean).length;
+      const playScore = scorePlayability({target: v.target, prefilled: p.prefilled}).score;
+      return {name: v.name, uniqueLetters, playability: playScore};
+    });
     const secrets = searchSecretMessages(p);
     report.puzzles.push({ id: p.id, title: p.title, playability: play, variants, secrets });
   }

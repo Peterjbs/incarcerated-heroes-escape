@@ -556,8 +556,9 @@
             buildShapePath(ctx, x, y, size, tile.shape);
             ctx.clip();
             
-            // Wood gradient background
-            const woodSet = WOOD_COLORS[Math.floor(Math.random() * WOOD_COLORS.length)];
+            // Wood gradient background (deterministic based on tile position)
+            const woodIndex = (tile.targetRow * 5 + tile.targetCol) % WOOD_COLORS.length;
+            const woodSet = WOOD_COLORS[woodIndex];
             const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
             gradient.addColorStop(0, woodSet[0]);
             gradient.addColorStop(0.5, woodSet[1]);
@@ -566,14 +567,16 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(x, y, size, size);
             
-            // Add wood grain texture
+            // Add wood grain texture (deterministic based on position)
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.lineWidth = 1;
+            const grainSeed = (tile.targetRow * 7 + tile.targetCol * 11) % 100 / 100;
             for (let i = 0; i < 5; i++) {
                 const yPos = y + (i + 1) * size / 6;
                 ctx.beginPath();
                 ctx.moveTo(x, yPos);
-                ctx.quadraticCurveTo(x + size/2, yPos + Math.random() * 3 - 1.5, x + size, yPos);
+                const variance = (grainSeed * 3 - 1.5) + (i * 0.3);
+                ctx.quadraticCurveTo(x + size/2, yPos + variance, x + size, yPos);
                 ctx.stroke();
             }
             
@@ -599,7 +602,6 @@
             
             // Draw letter with Cabin Sketch font
             ctx.save();
-            const inkColor = INK_COLORS[Math.floor(Math.random() * INK_COLORS.length)];
             ctx.fillStyle = 'white';
             ctx.font = `bold ${size * 0.45}px 'Cabin Sketch', cursive`;
             ctx.textAlign = 'center';
