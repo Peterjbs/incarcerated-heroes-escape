@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Wooden Jigsaw Word Cross – v4</title>
+
+  <!-- Cabin Sketch Bold for letters -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: #929a68;
+      color: grey ;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .wrapper {
+      background: radial-gradient(circle at 0% 0%, #f2dcc4, #989f7e  );
+      border-radius: 1.8rem;
+      padding: 1.5rem 1.8rem 2rem;
+      box-shadow: 0 24px 45px rgba(0, 0, 0, 0.95);
+      border: 1px solid rgba(15, 23, 42, 0.95);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 0 0 0.4rem;
+      text-align: center;
+    }
+
+    p {
+      margin: 0 0 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: black;
+      max-width: 760px;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 1.2rem;
+      background: Color: #c0c7ab
+      touch-action: none; /* allow pointer events on touch */
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Interactive Wooden Jigsaw Word Cross</h1>
+    <p>
+      Exact 100×100 tiles, 10px gaps, pixel-perfect indents and flanges. Tiles drag freely
+      and stack outside the board, snap to matching slots inside, and complain if you try
+      to put the wrong shape into a space.
+    </p>
+    <canvas id="board" width="1200" height="800"></canvas>
+  </div>
+
+  <script>
+    // === Geometry constants ====================================================
+    const SQUARE = 100; // base tile square
+    const GAP = 10;     // gap between squares
+    const GRID_SIZE = 5;
+
+    const BOARD_SIZE = SQUARE * GRID_SIZE + GAP * (GRID_SIZE - 1); // 540
+    const BOARD_X = 40;
+    const BOARD_Y = 40;
+
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+
+    // === Word grid =============================================================
+    const letterGrid = [
+      ["w", "e", "l", "c", "h"],
+      ["i", null, "a", null, "a"],
+      ["d", "e", "m", "u", "r"],
+      ["e", null, "b", null, "p"],
+      ["n", "a", "s", "t", "y"]
+    ];
+
+    // === Shape type grid (exact mapping) =======================================
+    const shapeTypeGrid = [
+      ["TL", "h",  "TM", "h",  "TR"],
+      ["v",  null, "v",  null, "v"],
+      ["LM", "h",  "C",  "h",  "RM"],
+      ["v",  null, "v",  null, "v"],
+      ["BL", "h",  "BM", "h",  "BR"]
+    ];
+
+    // === Side definitions (left, top, right, bottom) ==========================
+    const SHAPE_DEFS = {
+      h:  { left: "indent", top: "border", right: "flange", bottom: "border" },
+      v:  { left: "border", top: "indent", right: "border", bottom: "flange" },
+
+      TL: { left: "border", top: "border", right: "flange", bottom: "flange" },
+      TM: { left: "indent", top: "border", right: "flange", bottom: "flange" },
+      TR: { left: "indent", top: "border", right: "border", bottom: "flange" },
+
+      LM: { left: "border", top: "indent", right: "flange", bottom: "flange" },
+      C:  { left: "indent", top: "indent", right: "flange", bottom: "flange" },
+      RM: { left: "indent", top: "indent", right: "border", bottom: "flange" },
+
+      BL: { left: "border", top: "indent", right: "flange", bottom: "border" },
+      BM: { left: "indent", top: "indent", right: "flange", bottom: "border" },
+      BR: { left: "indent", top: "indent", right: "border", bottom: "border" }
+    };
+
+    // === Data structures =======================================================
+    const slots = [];
+    const tiles = [];
+
+    const INK_COLORS = [
+      "#f97316", "#22c55e", "#3b82f6", "#eab308", "#2DAEFD","#01dddd", "#8aff9c", "#FF9E9E", "#fff44f", "#ffaa1d",
+
+      "#ec4899", "#a855f7", "#facc15", "#14b8a6", "#fc59a3", "#8E3CCB",
+    ];
+
+    // Slight variations of the same wood species
+    const WOOD_SETS = [
+      { light: "#351e10", mid: "#ddb076", dark: "#8b5a33" },
+      { light: "#351e10", mid: "#d79c63", dark: "#854d29" },
+      { light: "#43270f", mid: "#e0af76", dark: "#945f35" },
+      { light: "#43270f", mid: "#d29258", dark: "#7f4a26" },
+      { light: "#362312", mid: "#e3b57d", dark: "#966338" }
+    ];
+
+    let borderStripePattern = null;
+
+    function createBorderPattern() {
+      const pCanvas = document.createElement("canvas");
+      pCanvas.width = 24;
+      pCanvas.height = 24;
+      const pCtx = pCanvas.getContext("2d");
+
+      // Base green
+      pCtx.fillStyle = "#be00fe";
+      pCtx.fillRect(0, 0, 24, 24);
+
+      // Gold diagonal stripe
+      pCtx.strokeStyle = "#fb607f";
+      pCtx.lineWidth = 10;
+      pCtx.beginPath();
+      pCtx.moveTo(-6, 24);
+      pCtx.lineTo(24, -6);
+      pCtx.stroke();
+
+      borderStripePattern = ctx.createPattern(pCanvas, "repeat");
+    }
+
+    // === Init slots ============================================================
+    function initSlots() {
+      slots.length = 0;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const letter = letterGrid[r][c];
+          if (!letter) continue;
+          const shapeType = shapeTypeGrid[r][c];
+          const x = BOARD_X + c * (SQUARE + GAP);
+          const y = BOARD_Y + r * (SQUARE + GAP);
+          slots.push({
+            row: r,
+            col: c,
+            x,
+            y,
+            centerX: x + SQUARE / 2,
+            centerY: y + SQUARE / 2,
+            shapeType,
+            occupiedTile: null
+          });
+        }
+      }
+    }
+
+    // === Init tiles ============================================================
+    function initTiles() {
+      tiles.length = 0;
+
+      const defs = [];
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const letter = letterGrid[r][c];
+          if (!letter) continue;
+          defs.push({ letter, shapeType: shapeTypeGrid[r][c] });
+        }
+      }
+
+      const trayStartX = BOARD_X + BOARD_SIZE + 80;
+      const trayStartY = BOARD_Y;
+      const colsInTray = 4;
+
+      defs.forEach((def, idx) => {
+        const { letter, shapeType } = def;
+        const sides = SHAPE_DEFS[shapeType];
+
+        const col = idx % colsInTray;
+        const row = Math.floor(idx / colsInTray);
+
+        const x = trayStartX + col * 140;
+        const y = trayStartY + row * 120;
+
+        const wood = WOOD_SETS[idx % WOOD_SETS.length];
+        const inkColor = INK_COLORS[idx % INK_COLORS.length];
+        const triIndex = idx % 5; // for slight variation
+
+        tiles.push({
+          letter,
+          shapeType,
+          sides,
+          x,
+          y,
+          slotRow: null,
+          slotCol: null,
+          inkColor,
+          wood,
+          triIndex,
+          snapSlotCandidate: null
+        });
+      });
+    }
+
+    // === Shape path (exact geometry) ==========================================
+    function buildShapePath(ctx, x, y, sides, includeFlange) {
+      const base = 100;
+      const indentDepth = 10;
+      const span = 80;
+      const spanStart = (base - span) / 2; // 10
+      const spanEnd = base - spanStart;    // 90
+
+      const left = sides.left;
+      const top = sides.top;
+      const right = sides.right;
+      const bottom = sides.bottom;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+
+      // TOP
+      if (top === "indent") {
+        ctx.lineTo(x + spanStart, y);
+        ctx.lineTo(x + base / 2, y + indentDepth);
+        ctx.lineTo(x + spanEnd, y);
+        ctx.lineTo(x + base, y);
+      } else {
+        ctx.lineTo(x + base, y);
+      }
+
+      // RIGHT
+      if (right === "flange" && includeFlange) {
+        ctx.lineTo(x + base, y + spanStart);
+        ctx.lineTo(x + base + 10, y + spanStart);
+        ctx.lineTo(x + base + 20, y + base / 2);
+        ctx.lineTo(x + base + 10, y + spanEnd);
+        ctx.lineTo(x + base, y + spanEnd);
+        ctx.lineTo(x + base, y + base);
+      } else {
+        ctx.lineTo(x + base, y + base);
+      }
+
+      // BOTTOM
+      if (bottom === "flange" && includeFlange) {
+        ctx.lineTo(x + spanEnd, y + base);
+        ctx.lineTo(x + spanEnd, y + base + 10);
+        ctx.lineTo(x + base / 2, y + base + 20);
+        ctx.lineTo(x + spanStart, y + base + 10);
+        ctx.lineTo(x + spanStart, y + base);
+        ctx.lineTo(x, y + base);
+      } else {
+        ctx.lineTo(x, y + base);
+      }
+
+      // LEFT
+      if (left === "indent") {
+        ctx.lineTo(x, y + spanEnd);
+        ctx.lineTo(x + indentDepth, y + base / 2);
+        ctx.lineTo(x, y + spanStart);
+        ctx.lineTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+
+      ctx.closePath();
+    }
+
+    // === Draw board ===========================================================
+    function drawBoard() {
+      // Recess squares
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const x = BOARD_X + c * (SQUARE + GAP);
+          const y = BOARD_Y + r * (SQUARE + GAP);
+          const letter = letterGrid[r][c];
+
+          if (letter) {
+            const grad = ctx.createLinearGradient(x, y, x, y + SQUARE);
+            grad.addColorStop(0, "#281c14");
+            grad.addColorStop(1, "#1b130d");
+            ctx.fillStyle = grad;
+            ctx.fillRect(x, y, SQUARE, SQUARE);
+
+            ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
+            ctx.lineWidth = 8;
+            ctx.strokeRect(x + 1, y + 1, SQUARE - 2, SQUARE - 2);
+
+            ctx.strokeStyle = "rgba(15, 23, 42, 0.8)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x + 3, y + 3, SQUARE - 6, SQUARE - 6);
+          } else {
+            ctx.fillStyle = "rgba(15, 23, 42, 0.1)";
+            ctx.fillRect(x, y, SQUARE, SQUARE);
+            ctx.strokeStyle = "rgba(31, 41, 55, 0.1)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 6]);
+            ctx.strokeRect(x + 6, y + 6, SQUARE - 12, SQUARE - 12);
+            ctx.setLineDash([]);
+          }
+        }
+      }
+
+      // Grooves between neighbours (horizontal)
+      ctx.fillStyle = "#1b130d";
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE - 1; c++) {
+          const l1 = letterGrid[r][c];
+          const l2 = letterGrid[r][c + 1];
+          if (!l1 || !l2) continue;
+          const x = BOARD_X + c * (SQUARE + GAP) + SQUARE;
+          const y = BOARD_Y + r * (SQUARE + GAP);
+          ctx.fillRect(x, y + 10, GAP, 80);
+        }
+      }
+
+      // Vertical grooves
+      for (let r = 0; r < GRID_SIZE - 1; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const l1 = letterGrid[r][c];
+          const l2 = letterGrid[r + 1][c];
+          if (!l1 || !l2) continue;
+          const x = BOARD_X + c * (SQUARE + GAP);
+          const y = BOARD_Y + r * (SQUARE + GAP) + SQUARE;
+          ctx.fillRect(x + 10, y, 80, GAP);
+        }
+      }
+    }
+
+    // === Draw single tile =====================================================
+    function drawTile(tile) {
+      const { x, y, sides, letter, inkColor, wood, triIndex } = tile;
+
+      ctx.save();
+
+      // 1. Base shape
+      buildShapePath(ctx, x, y, sides, true);
+
+      // Timber gradient
+      const grad = ctx.createLinearGradient(x, y, x + 100, y + 100);
+      grad.addColorStop(0, wood.light);
+      grad.addColorStop(0.4, wood.mid);
+      grad.addColorStop(1, wood.dark);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Outer edge
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.95)";
+      ctx.stroke();
+
+      // 2. Bevel highlight/shadow
+      ctx.save();
+      ctx.clip();
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.fillRect(x + 6, y + 6, 88, 24);
+
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.fillRect(x + 6, y + 60, 88, 34);
+      ctx.restore();
+
+      // 3. Wood grain
+      ctx.save();
+      ctx.clip();
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 4; i++) {
+        const yy = y + 22 + i * 16;
+        ctx.beginPath();
+        ctx.moveTo(x + 8, yy);
+        ctx.bezierCurveTo(
+          x + 36, yy - 4,
+          x + 64, yy + 4,
+          x + 92, yy
+        );
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 4. Dark mahogany triangular overlay (not yellow)
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y, 100, 100);
+      ctx.clip();
+      const cx = x + 50;
+      const cy = y + 50;
+      const baseAlpha = 0.5 + 0.01 * triIndex;
+      const triColor = `rgba(43, 15, 6, ${baseAlpha.toFixed(2)})`;
+      ctx.fillStyle = triColor;
+
+      // top
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 100, y);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.fill();
+
+      // right
+      ctx.beginPath();
+      ctx.moveTo(x + 100, y);
+      ctx.lineTo(x + 100, y + 100);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.fill();
+
+      // bottom
+      ctx.beginPath();
+      ctx.moveTo(x + 100, y + 100);
+      ctx.lineTo(x, y + 100);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.fill();
+
+      // left
+      ctx.beginPath();
+      ctx.moveTo(x, y + 100);
+      ctx.lineTo(x, y);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // 5. Indent highlights – 10px wide, 50% white, slightly steeper/deeper
+
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ffffff";
+
+      // Left indent
+      if (sides.left === "indent") {
+        // original left indent apex is (x+10, y+50)
+        // new apex pushed 10px further in: (x+20, y+50)
+        const p1 = { x: x, y: y + 10 };
+        const p2 = { x: x, y: y + 90 };
+        const p3 = { x: x + 10, y: y + 50 };
+        const apex = { x: x + 25, y: y + 50 }; // 20px right of edge at centre
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(apex.x, apex.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineTo(p3.x, p3.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Top indent
+      if (sides.top === "indent") {
+        // original apex (x+50, y+10); new apex deeper: (x+50, y+20)
+        const p1 = { x: x + 10, y: y };
+        const p2 = { x: x + 90, y: y };
+        const p3 = { x: x + 50, y: y+10 };
+        const apex = { x: x + 50, y: y + 25 };
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(apex.x, apex.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineTo(p3.x, p3.y);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 6. Green & gold caution-tape borders on 'border' sides
+      ctx.save();
+      if (!borderStripePattern) {
+        createBorderPattern();
+      }
+      ctx.fillStyle = borderStripePattern;
+
+      if (sides.top === "border") {
+        ctx.fillRect(x, y, 100, 15);
+      }
+      if (sides.bottom === "border") {
+        ctx.fillRect(x, y + 85, 100, 15);
+      }
+      if (sides.left === "border") {
+        ctx.fillRect(x, y, 15, 100);
+      }
+      if (sides.right === "border") {
+        ctx.fillRect(x + 85, y, 15, 100);
+      }
+
+      // Gold corner dots
+      if (
+        sides.top === "border" ||
+        sides.bottom === "border" ||
+        sides.left === "border" ||
+        sides.right === "border"
+      ) {
+            ctx.fillStyle = "#402f1d"
+
+
+        const rDot = 4;
+        ctx.beginPath();
+        ctx.arc(x + 8, y + 8, rDot, 0, Math.PI * 2);
+        ctx.arc(x + 92, y + 8, rDot, 0, Math.PI * 2);
+        ctx.arc(x + 8, y + 92, rDot, 0, Math.PI * 2);
+        ctx.arc(x + 92, y + 92, rDot, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 7. Flanges – darker with segmented stripes
+      const textDark = "rgba(31, 13, 6, 0.9)";
+
+      // Right flange: horizontal lines, variable lengths
+      if (sides.right === "flange") {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x + 100, y + 10, 20, 80);
+        ctx.clip();
+
+        ctx.fillStyle = "rgba(15, 10, 6, 0.5)";
+        ctx.fillRect(x + 100, y + 10, 20, 80);
+
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.8)"
+        ctx.lineWidth = 5;
+        const numLines = 9; // from y+10 to y+90 step 10
+        const midIdx = Math.floor(numLines / 2);
+        for (let i = 0; i < numLines; i++) {
+          const yy = y + 10 + i * 10;
+          let len;
+          if (i === midIdx) len = 20;
+          else if (i === midIdx - 1 || i === midIdx + 1) len = 15;
+          else len = 10;
+
+          ctx.beginPath();
+          ctx.moveTo(x + 100, yy);
+          ctx.lineTo(x + 100 + len, yy);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // Bottom flange: vertical lines, variable lengths
+      if (sides.bottom === "flange") {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x + 10, y + 100, 80, 20);
+        ctx.clip();
+
+        ctx.fillStyle = "rgba(15, 10, 6, 0.6)";
+        ctx.fillRect(x + 10, y + 100, 80, 20);
+
+        ctx.strokeStyle = textDark;
+        ctx.lineWidth = 5;
+        const numLines = 9; // x+10..x+90
+        const midIdx = Math.floor(numLines / 2);
+        for (let i = 0; i < numLines; i++) {
+          const xx = x + 10 + i * 10;
+          let len;
+          if (i === midIdx) len = 20;
+          else if (i === midIdx - 1 || i === midIdx + 1) len = 15;
+          else len = 10;
+
+          ctx.beginPath();
+          ctx.moveTo(xx, y + 100);
+          ctx.lineTo(xx, y + 100 + len);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 8. Letter – Cabin Sketch Bold, bigger, washier outline
+      ctx.save();
+      const lx = x + 50;
+      const ly = y + 54;
+      ctx.font =
+        "90px 'Cabin Sketch', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.save();
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "rgba(0, 0, 0, 1)"
+      ctx.strokeText(letter.toUpperCase(), lx, ly);
+      ctx.restore();
+      // Coloured outline, larger and faded
+      ctx.save();
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = 8.8;
+      ctx.strokeStyle = inkColor;
+      ctx.strokeText(letter.toUpperCase(), lx, ly);
+      ctx.restore();
+
+      // Dark brown fill ~90%
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.fillText(letter.toUpperCase(), lx, ly);
+
+      // subtle inner shadow
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.strokeText(letter.toUpperCase(), lx, ly + 1);
+
+      ctx.restore();
+      ctx.restore();
+    }
+
+    // === Render ===============================================================
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBoard();
+      for (const tile of tiles) {
+        drawTile(tile);
+      }
+    }
+
+    // === Hit testing ==========================================================
+    function findTopTileAtPoint(x, y) {
+      for (let i = tiles.length - 1; i >= 0; i--) {
+        const tile = tiles[i];
+        const bx = tile.x - 20;
+        const by = tile.y - 20;
+        const bw = 140;
+        const bh = 140;
+        if (x >= bx && x <= bx + bw && y >= by && y <= by + bh) {
+          return tile;
+        }
+      }
+      return null;
+    }
+
+    // === Snapping logic =======================================================
+    function computeSnapCandidate(tile) {
+      const cx = tile.x + SQUARE / 2;
+      const cy = tile.y + SQUARE / 2;
+
+      let bestSlot = null;
+      let bestDistSq = Infinity;
+
+      for (const slot of slots) {
+        if (slot.shapeType !== tile.shapeType) continue;
+        const dx = cx - slot.centerX;
+        const dy = cy - slot.centerY;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < bestDistSq && Math.sqrt(distSq) < 80) {
+          bestDistSq = distSq;
+          bestSlot = slot;
+        }
+      }
+
+      if (bestSlot) {
+        tile.snapSlotCandidate = bestSlot;
+        tile.x = bestSlot.x;
+        tile.y = bestSlot.y;
+      } else {
+        tile.snapSlotCandidate = null;
+      }
+    }
+
+    function findNearestSlotAny(tile) {
+      const cx = tile.x + SQUARE / 2;
+      const cy = tile.y + SQUARE / 2;
+
+      let bestSlot = null;
+      let bestDistSq = Infinity;
+
+      for (const slot of slots) {
+        const dx = cx - slot.centerX;
+        const dy = cy - slot.centerY;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < bestDistSq) {
+          bestDistSq = distSq;
+          bestSlot = slot;
+        }
+      }
+
+      if (!bestSlot) return null;
+      return { slot: bestSlot, dist: Math.sqrt(bestDistSq) };
+    }
+
+    function snapTileToSlotIfPossible(tile) {
+      const candidate = tile.snapSlotCandidate;
+      if (!candidate) {
+        tile.slotRow = null;
+        tile.slotCol = null;
+        return;
+      }
+
+      if (candidate.occupiedTile && candidate.occupiedTile !== tile) {
+        const other = candidate.occupiedTile;
+        other.slotRow = null;
+        other.slotCol = null;
+        const trayX = BOARD_X + BOARD_SIZE + 80;
+        other.x = trayX + Math.random() * 260;
+        other.y = BOARD_Y + Math.random() * (canvas.height - BOARD_Y - 160);
+      }
+
+      candidate.occupiedTile = tile;
+      tile.slotRow = candidate.row;
+      tile.slotCol = candidate.col;
+      tile.x = candidate.x;
+      tile.y = candidate.y;
+    }
+
+    function detachTileFromSlot(tile) {
+      if (tile.slotRow == null || tile.slotCol == null) return;
+      for (const slot of slots) {
+        if (
+          slot.row === tile.slotRow &&
+          slot.col === tile.slotCol &&
+          slot.occupiedTile === tile
+        ) {
+          slot.occupiedTile = null;
+          break;
+        }
+      }
+      tile.slotRow = null;
+      tile.slotCol = null;
+      tile.snapSlotCandidate = null;
+    }
+
+    // === Pointer-based dragging ===============================================
+    let draggingTile = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let activePointerId = null;
+
+    function getCanvasCoords(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener("pointerdown", (event) => {
+      const { x, y } = getCanvasCoords(event);
+      const tile = findTopTileAtPoint(x, y);
+      if (!tile) return;
+
+      draggingTile = tile;
+      activePointerId = event.pointerId;
+      dragOffsetX = x - tile.x;
+      dragOffsetY = y - tile.y;
+
+      detachTileFromSlot(tile);
+
+      // bring to top
+      const idx = tiles.indexOf(tile);
+      if (idx >= 0 && idx !== tiles.length - 1) {
+        tiles.splice(idx, 1);
+        tiles.push(tile);
+      }
+
+      canvas.setPointerCapture(activePointerId);
+      render();
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      if (!draggingTile || event.pointerId !== activePointerId) return;
+      const { x, y } = getCanvasCoords(event);
+
+      // move freely
+      draggingTile.x = x - dragOffsetX;
+      draggingTile.y = y - dragOffsetY;
+      draggingTile.snapSlotCandidate = null;
+
+      // check for snap candidate
+      computeSnapCandidate(draggingTile);
+
+      render();
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      if (!draggingTile || event.pointerId !== activePointerId) return;
+
+      if (draggingTile.snapSlotCandidate) {
+        snapTileToSlotIfPossible(draggingTile);
+      } else {
+        const nearest = findNearestSlotAny(draggingTile);
+        if (nearest && nearest.dist < 80) {
+          if (nearest.slot.shapeType !== draggingTile.shapeType) {
+            alert("Tile does not fit into this space.");
+          }
+        }
+        draggingTile.slotRow = null;
+        draggingTile.slotCol = null;
+      }
+
+      draggingTile = null;
+      canvas.releasePointerCapture(activePointerId);
+      activePointerId = null;
+      render();
+    });
+
+    canvas.addEventListener("pointercancel", (event) => {
+      if (event.pointerId === activePointerId) {
+        draggingTile = null;
+        activePointerId = null;
+      }
+    });
+
+    // === Init ==================================================================
+    function init() {
+      createBorderPattern();
+      initSlots();
+      initTiles();
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
