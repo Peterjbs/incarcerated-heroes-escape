@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5×5 Wooden Jigsaw Word Puzzle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cabin Sketch', cursive;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #f39c12;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #bbb;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .info-item {
+            color: #f39c12;
+        }
+        
+        .game-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .canvas-container {
+            position: relative;
+        }
+        
+        #gameCanvas {
+            border: 3px solid #f39c12;
+            border-radius: 10px;
+            background: rgba(139, 90, 43, 0.3);
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        .tray-container {
+            min-width: 250px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .tray-title {
+            color: #f39c12;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .tile-tray {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            justify-items: center;
+        }
+        
+        .tray-tile {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, rgba(160, 110, 60, 0.95), rgba(120, 80, 40, 0.95));
+            border: 3px solid rgba(233, 69, 96, 0.8);
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .tray-tile:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(233, 69, 96, 0.4);
+        }
+        
+        .tray-tile.selected {
+            border-color: #2ecc71;
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.6);
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            margin: 5px;
+            font-size: 1rem;
+            font-family: 'Cabin Sketch', cursive;
+            border: 2px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .btn-primary:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        
+        .btn-secondary:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-info {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .btn-info:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .feedback {
+            min-height: 50px;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        
+        .help-text {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 5×5 Wooden Jigsaw Word Puzzle</h1>
+        <p class="subtitle">Arrange the carved wooden tiles to reveal the hidden words</p>
+        
+        <div class="info-bar">
+            <div class="info-item">Puzzle: <span id="puzzleName">Corners Fixed</span></div>
+            <div class="info-item">Time: <span id="timer">0</span>s</div>
+        </div>
+        
+        <div class="game-area">
+            <div class="canvas-container">
+                <canvas id="gameCanvas" width="550" height="550"></canvas>
+            </div>
+            
+            <div class="tray-container">
+                <h3 class="tray-title">Tile Tray</h3>
+                <div id="tileTray" class="tile-tray"></div>
+            </div>
+        </div>
+        
+        <div id="feedback" class="feedback"></div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="checkSolution()">✓ Check Solution</button>
+            <button class="btn btn-secondary" onclick="resetPuzzle()">↻ Reset</button>
+            <button class="btn btn-info" onclick="showSecretMessage()">🔍 Find Secret</button>
+        </div>
+        
+        <div class="help-text">
+            💡 <strong>Controls:</strong> Click a tile to select it, then click a grid cell to place it. 
+            Drag tiles directly from the tray to the grid. 
+            Wooden tiles have jigsaw shapes with flanges and indents that interlock!
+        </div>
+    </div>
+
+    <script>
+        // ===== PUZZLE CONFIGURATION =====
+        // Based on Puzzle 1 from the agent with corners fixed
+        const PUZZLE_CONFIG = {
+            name: "Corners Fixed",
+            // 5×5 grid: null = blocked/empty cell (for crossword pattern)
+            target: [
+                ["a","l","a","r","m"],
+                ["w", null,"d", null,"a"],
+                ["a","b","a","c","k"],
+                ["i", null,"g", null,"e"],
+                ["t","e","e","n","s"]
+            ],
+            // Positions of prefilled tiles (row, col)
+            prefilled: [[0,0],[0,4],[4,0],[4,4]],
+            // Secret message hint
+            secretHint: "First letters of the six words spell something..."
+        };
+
+        // Jigsaw shape types
+        const SHAPE_FLAT = 0;
+        const SHAPE_INDENT = 1;
+        const SHAPE_FLANGE = 2;
+
+        // Wood gradient colors (timber effect)
+        const WOOD_COLORS = [
+            ['#a0825c', '#8b6a3f', '#78552b'],  // Light wood
+            ['#9e7a4f', '#855d3a', '#6d4a2e'],  // Medium wood
+            ['#8b6239', '#724f2f', '#5a3f24']   // Dark wood
+        ];
+
+        // Ink colors for letters
+        const INK_COLORS = ['#2c1810', '#1a0f08', '#3d2817'];
+
+        // ===== GAME STATE =====
+        let gameState = {
+            grid: Array(5).fill(null).map(() => Array(5).fill(null)),
+            shapes: null,
+            tray: [],
+            selectedTile: null,
+            draggedTile: null,
+            dragOffset: {x: 0, y: 0},
+            hoveredCell: null,
+            startTime: Date.now(),
+            timerInterval: null,
+            cellSize: 90,
+            gridOffsetX: 50,
+            gridOffsetY: 50
+        };
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // ===== INITIALIZATION =====
+        function initGame() {
+            // Generate jigsaw shapes for all cells
+            gameState.shapes = generateJigsawShapes();
+            
+            // Place prefilled tiles
+            PUZZLE_CONFIG.prefilled.forEach(([row, col]) => {
+                const letter = PUZZLE_CONFIG.target[row][col];
+                gameState.grid[row][col] = {
+                    letter: letter,
+                    fixed: true,
+                    row: row,
+                    col: col,
+                    shape: gameState.shapes[row][col]
+                };
+            });
+            
+            // Build tile tray
+            buildTileTray();
+            
+            // Start timer
+            startTimer();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initial render
+            renderGame();
+        }
+
+        function generateJigsawShapes() {
+            // Generate interlocking jigsaw pieces for 5×5 grid
+            const shapes = Array(5).fill(null).map(() => 
+                Array(5).fill(null).map(() => ({top: 0, right: 0, bottom: 0, left: 0}))
+            );
+            
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    // Top edge
+                    if (row === 0) {
+                        shapes[row][col].top = SHAPE_FLAT;
+                    } else if (PUZZLE_CONFIG.target[row-1][col] === null) {
+                        shapes[row][col].top = SHAPE_FLAT;
+                    } else {
+                        shapes[row][col].top = shapes[row-1][col].bottom === SHAPE_INDENT ? SHAPE_FLANGE :
+                                               shapes[row-1][col].bottom === SHAPE_FLANGE ? SHAPE_INDENT : SHAPE_FLAT;
+                    }
+                    
+                    // Left edge
+                    if (col === 0) {
+                        shapes[row][col].left = SHAPE_FLAT;
+                    } else if (PUZZLE_CONFIG.target[row][col-1] === null) {
+                        shapes[row][col].left = SHAPE_FLAT;
+                    } else {
+                        shapes[row][col].left = shapes[row][col-1].right === SHAPE_INDENT ? SHAPE_FLANGE :
+                                                shapes[row][col-1].right === SHAPE_FLANGE ? SHAPE_INDENT : SHAPE_FLAT;
+                    }
+                    
+                    // Right edge
+                    if (col === 4) {
+                        shapes[row][col].right = SHAPE_FLAT;
+                    } else if (PUZZLE_CONFIG.target[row][col+1] === null) {
+                        shapes[row][col].right = SHAPE_FLAT;
+                    } else {
+                        shapes[row][col].right = Math.random() < 0.5 ? SHAPE_INDENT : SHAPE_FLANGE;
+                    }
+                    
+                    // Bottom edge
+                    if (row === 4) {
+                        shapes[row][col].bottom = SHAPE_FLAT;
+                    } else if (PUZZLE_CONFIG.target[row+1][col] === null) {
+                        shapes[row][col].bottom = SHAPE_FLAT;
+                    } else {
+                        shapes[row][col].bottom = Math.random() < 0.5 ? SHAPE_INDENT : SHAPE_FLANGE;
+                    }
+                }
+            }
+            
+            return shapes;
+        }
+
+        function buildTileTray() {
+            gameState.tray = [];
+            
+            // Collect all tiles that aren't prefilled
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const letter = PUZZLE_CONFIG.target[row][col];
+                    if (letter && !gameState.grid[row][col]) {
+                        gameState.tray.push({
+                            letter: letter,
+                            targetRow: row,
+                            targetCol: col,
+                            shape: gameState.shapes[row][col],
+                            inTray: true
+                        });
+                    }
+                }
+            }
+            
+            // Shuffle tray
+            for (let i = gameState.tray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameState.tray[i], gameState.tray[j]] = [gameState.tray[j], gameState.tray[i]];
+            }
+            
+            renderTileTray();
+        }
+
+        function renderTileTray() {
+            const trayDiv = document.getElementById('tileTray');
+            trayDiv.innerHTML = '';
+            
+            gameState.tray.forEach((tile, index) => {
+                const tileDiv = document.createElement('div');
+                tileDiv.className = 'tray-tile';
+                if (gameState.selectedTile === tile) {
+                    tileDiv.classList.add('selected');
+                }
+                tileDiv.textContent = tile.letter.toUpperCase();
+                tileDiv.dataset.tileIndex = index;
+                
+                tileDiv.addEventListener('click', () => {
+                    selectTrayTile(tile);
+                });
+                
+                trayDiv.appendChild(tileDiv);
+            });
+        }
+
+        function selectTrayTile(tile) {
+            gameState.selectedTile = tile;
+            renderTileTray();
+            renderGame();
+        }
+
+        // ===== RENDERING =====
+        function renderGame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid background
+            ctx.fillStyle = 'rgba(139, 90, 43, 0.2)';
+            ctx.fillRect(gameState.gridOffsetX, gameState.gridOffsetY, 
+                        gameState.cellSize * 5, gameState.cellSize * 5);
+            
+            // Draw each cell
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const x = gameState.gridOffsetX + col * gameState.cellSize;
+                    const y = gameState.gridOffsetY + row * gameState.cellSize;
+                    
+                    // Skip null cells (blocked)
+                    if (PUZZLE_CONFIG.target[row][col] === null) {
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                        ctx.fillRect(x, y, gameState.cellSize, gameState.cellSize);
+                        continue;
+                    }
+                    
+                    // Highlight hovered cell
+                    if (gameState.hoveredCell && 
+                        gameState.hoveredCell.row === row && 
+                        gameState.hoveredCell.col === col) {
+                        ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+                        ctx.fillRect(x, y, gameState.cellSize, gameState.cellSize);
+                    }
+                    
+                    // Draw jigsaw shape outline
+                    drawJigsawOutline(x, y, gameState.cellSize, gameState.shapes[row][col]);
+                    
+                    // Draw tile if present
+                    const tile = gameState.grid[row][col];
+                    if (tile && tile !== gameState.draggedTile) {
+                        drawWoodenTile(x, y, gameState.cellSize, tile);
+                    }
+                }
+            }
+            
+            // Draw dragged tile
+            if (gameState.draggedTile && gameState.draggedTile.screenX !== undefined) {
+                const size = gameState.cellSize;
+                drawWoodenTile(gameState.draggedTile.screenX, 
+                              gameState.draggedTile.screenY, 
+                              size, gameState.draggedTile, true);
+            }
+        }
+
+        function drawJigsawOutline(x, y, size, shape) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(139, 90, 43, 0.5)';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            buildShapePath(ctx, x, y, size, shape);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function buildShapePath(ctx, x, y, size, shape) {
+            const indent = size * 0.12;
+            const radius = size * 0.08;
+            
+            // Start at top-left
+            ctx.moveTo(x, y);
+            
+            // Top edge
+            if (shape.top === SHAPE_FLAT) {
+                ctx.lineTo(x + size, y);
+            } else {
+                ctx.lineTo(x + size * 0.4, y);
+                if (shape.top === SHAPE_INDENT) {
+                    ctx.arc(x + size * 0.5, y - indent, radius, Math.PI, 0, false);
+                } else {
+                    ctx.arc(x + size * 0.5, y + indent, radius, Math.PI, 0, true);
+                }
+                ctx.lineTo(x + size, y);
+            }
+            
+            // Right edge
+            if (shape.right === SHAPE_FLAT) {
+                ctx.lineTo(x + size, y + size);
+            } else {
+                ctx.lineTo(x + size, y + size * 0.4);
+                if (shape.right === SHAPE_INDENT) {
+                    ctx.arc(x + size + indent, y + size * 0.5, radius, Math.PI, 0, true);
+                } else {
+                    ctx.arc(x + size - indent, y + size * 0.5, radius, Math.PI, 0, false);
+                }
+                ctx.lineTo(x + size, y + size);
+            }
+            
+            // Bottom edge
+            if (shape.bottom === SHAPE_FLAT) {
+                ctx.lineTo(x, y + size);
+            } else {
+                ctx.lineTo(x + size * 0.6, y + size);
+                if (shape.bottom === SHAPE_INDENT) {
+                    ctx.arc(x + size * 0.5, y + size + indent, radius, 0, Math.PI, false);
+                } else {
+                    ctx.arc(x + size * 0.5, y + size - indent, radius, 0, Math.PI, true);
+                }
+                ctx.lineTo(x, y + size);
+            }
+            
+            // Left edge
+            if (shape.left === SHAPE_FLAT) {
+                ctx.lineTo(x, y);
+            } else {
+                ctx.lineTo(x, y + size * 0.6);
+                if (shape.left === SHAPE_INDENT) {
+                    ctx.arc(x - indent, y + size * 0.5, radius, 0, Math.PI, true);
+                } else {
+                    ctx.arc(x + indent, y + size * 0.5, radius, 0, Math.PI, false);
+                }
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.closePath();
+        }
+
+        function drawWoodenTile(x, y, size, tile, isDragging = false) {
+            ctx.save();
+            
+            // Create clipping path for jigsaw shape
+            ctx.beginPath();
+            buildShapePath(ctx, x, y, size, tile.shape);
+            ctx.clip();
+            
+            // Wood gradient background
+            const woodSet = WOOD_COLORS[Math.floor(Math.random() * WOOD_COLORS.length)];
+            const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+            gradient.addColorStop(0, woodSet[0]);
+            gradient.addColorStop(0.5, woodSet[1]);
+            gradient.addColorStop(1, woodSet[2]);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x, y, size, size);
+            
+            // Add wood grain texture
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const yPos = y + (i + 1) * size / 6;
+                ctx.beginPath();
+                ctx.moveTo(x, yPos);
+                ctx.quadraticCurveTo(x + size/2, yPos + Math.random() * 3 - 1.5, x + size, yPos);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+            
+            // Draw border
+            ctx.save();
+            ctx.beginPath();
+            buildShapePath(ctx, x, y, size, tile.shape);
+            
+            if (tile.fixed) {
+                ctx.strokeStyle = 'rgba(46, 204, 113, 0.9)';
+                ctx.lineWidth = 4;
+            } else if (isDragging) {
+                ctx.strokeStyle = 'rgba(243, 156, 18, 0.9)';
+                ctx.lineWidth = 4;
+            } else {
+                ctx.strokeStyle = 'rgba(233, 69, 96, 0.8)';
+                ctx.lineWidth = 3;
+            }
+            ctx.stroke();
+            ctx.restore();
+            
+            // Draw letter with Cabin Sketch font
+            ctx.save();
+            const inkColor = INK_COLORS[Math.floor(Math.random() * INK_COLORS.length)];
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.45}px 'Cabin Sketch', cursive`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText(tile.letter.toUpperCase(), x + size/2, y + size/2);
+            ctx.restore();
+        }
+
+        // ===== EVENT HANDLING =====
+        function setupEventListeners() {
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+        }
+
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const clickedTile = getTileAtPosition(x, y);
+            
+            if (clickedTile && !clickedTile.fixed) {
+                gameState.selectedTile = clickedTile;
+                gameState.draggedTile = clickedTile;
+                gameState.dragOffset = {
+                    x: x - (gameState.gridOffsetX + clickedTile.col * gameState.cellSize),
+                    y: y - (gameState.gridOffsetY + clickedTile.row * gameState.cellSize)
+                };
+                gameState.draggedTile.screenX = x - gameState.dragOffset.x;
+                gameState.draggedTile.screenY = y - gameState.dragOffset.y;
+            } else {
+                const cell = getCellAtPosition(x, y);
+                if (cell && gameState.selectedTile) {
+                    placeTile(gameState.selectedTile, cell.row, cell.col);
+                    gameState.selectedTile = null;
+                }
+            }
+            
+            renderGame();
+        }
+
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (gameState.draggedTile) {
+                gameState.draggedTile.screenX = x - gameState.dragOffset.x;
+                gameState.draggedTile.screenY = y - gameState.dragOffset.y;
+                
+                const cell = getCellAtPosition(x, y);
+                gameState.hoveredCell = cell;
+                
+                renderGame();
+            } else {
+                const cell = getCellAtPosition(x, y);
+                gameState.hoveredCell = cell;
+                renderGame();
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (!gameState.draggedTile) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const cell = getCellAtPosition(x, y);
+            
+            if (cell) {
+                placeTile(gameState.draggedTile, cell.row, cell.col);
+            }
+            
+            gameState.draggedTile = null;
+            gameState.hoveredCell = null;
+            renderGame();
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMouseDown({clientX: touch.clientX, clientY: touch.clientY});
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMouseMove({clientX: touch.clientX, clientY: touch.clientY});
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            if (e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                handleMouseUp({clientX: touch.clientX, clientY: touch.clientY});
+            }
+        }
+
+        function getTileAtPosition(x, y) {
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const tile = gameState.grid[row][col];
+                    if (tile) {
+                        const cellX = gameState.gridOffsetX + col * gameState.cellSize;
+                        const cellY = gameState.gridOffsetY + row * gameState.cellSize;
+                        if (x >= cellX && x < cellX + gameState.cellSize &&
+                            y >= cellY && y < cellY + gameState.cellSize) {
+                            return tile;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getCellAtPosition(x, y) {
+            const col = Math.floor((x - gameState.gridOffsetX) / gameState.cellSize);
+            const row = Math.floor((y - gameState.gridOffsetY) / gameState.cellSize);
+            
+            if (row >= 0 && row < 5 && col >= 0 && col < 5 && 
+                PUZZLE_CONFIG.target[row][col] !== null) {
+                return {row, col};
+            }
+            
+            return null;
+        }
+
+        function placeTile(tile, row, col) {
+            // Check if cell is occupied by fixed tile
+            if (gameState.grid[row][col] && gameState.grid[row][col].fixed) {
+                showFeedback('⚠️ Cell is already filled!', '#f39c12');
+                return;
+            }
+            
+            // Remove tile from previous location
+            if (!tile.inTray) {
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 5; c++) {
+                        if (gameState.grid[r][c] === tile) {
+                            gameState.grid[r][c] = null;
+                        }
+                    }
+                }
+            } else {
+                gameState.tray = gameState.tray.filter(t => t !== tile);
+            }
+            
+            // Place tile
+            tile.inTray = false;
+            tile.row = row;
+            tile.col = col;
+            gameState.grid[row][col] = tile;
+            
+            renderTileTray();
+            clearFeedback();
+        }
+
+        // ===== GAME LOGIC =====
+        function checkSolution() {
+            // Check if all cells are filled
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    if (PUZZLE_CONFIG.target[row][col] !== null && !gameState.grid[row][col]) {
+                        showFeedback('⚠️ Puzzle incomplete! Fill all cells.', '#f39c12');
+                        return;
+                    }
+                }
+            }
+            
+            // Check if all letters match
+            let allCorrect = true;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    if (PUZZLE_CONFIG.target[row][col] !== null) {
+                        const expected = PUZZLE_CONFIG.target[row][col];
+                        const actual = gameState.grid[row][col].letter;
+                        if (expected !== actual) {
+                            allCorrect = false;
+                        }
+                    }
+                }
+            }
+            
+            if (allCorrect) {
+                clearInterval(gameState.timerInterval);
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                showFeedback(`🎉 Puzzle Complete! Time: ${elapsed}s`, '#2ecc71');
+            } else {
+                showFeedback('✗ Some tiles are in wrong positions. Keep trying!', '#e74c3c');
+            }
+        }
+
+        function resetPuzzle() {
+            gameState.grid = Array(5).fill(null).map(() => Array(5).fill(null));
+            
+            // Replace prefilled tiles
+            PUZZLE_CONFIG.prefilled.forEach(([row, col]) => {
+                const letter = PUZZLE_CONFIG.target[row][col];
+                gameState.grid[row][col] = {
+                    letter: letter,
+                    fixed: true,
+                    row: row,
+                    col: col,
+                    shape: gameState.shapes[row][col]
+                };
+            });
+            
+            buildTileTray();
+            gameState.startTime = Date.now();
+            clearFeedback();
+            renderGame();
+        }
+
+        function showSecretMessage() {
+            // Extract the six words (3 across at rows 0,2,4 and 3 down at cols 0,2,4)
+            const acrossWords = [0, 2, 4].map(row => {
+                let word = '';
+                for (let col = 0; col < 5; col++) {
+                    if (gameState.grid[row][col]) {
+                        word += gameState.grid[row][col].letter;
+                    }
+                }
+                return word;
+            });
+            
+            const downWords = [0, 2, 4].map(col => {
+                let word = '';
+                for (let row = 0; row < 5; row++) {
+                    if (gameState.grid[row][col]) {
+                        word += gameState.grid[row][col].letter;
+                    }
+                }
+                return word;
+            });
+            
+            const allWords = acrossWords.concat(downWords);
+            const firstLetters = allWords.map(w => w[0] || '').join('');
+            
+            showFeedback(`🔍 First letters: ${firstLetters.toUpperCase()} | ${PUZZLE_CONFIG.secretHint}`, '#3498db');
+        }
+
+        function showFeedback(message, color) {
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = `<span style="color: ${color};">${message}</span>`;
+        }
+
+        function clearFeedback() {
+            document.getElementById('feedback').innerHTML = '';
+        }
+
+        function startTimer() {
+            gameState.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                document.getElementById('timer').textContent = elapsed;
+            }, 1000);
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
