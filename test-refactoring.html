@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Refactoring Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f0f0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #e94560;
+            text-align: center;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .pass {
+            background: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid #2ecc71;
+        }
+        .fail {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid #e74c3c;
+        }
+        button {
+            background: linear-gradient(135deg, #e94560, #c7355f);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 1rem;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Level Refactoring Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>1. Backward Compatibility Tests</h2>
+        <p>Testing that old function names still work via aliases...</p>
+        <div id="backward-compat-results"></div>
+        <button onclick="testBackwardCompatibility()">Run Tests</button>
+    </div>
+
+    <div class="test-section">
+        <h2>2. New Function Name Tests</h2>
+        <p>Testing that new descriptive function names work...</p>
+        <div id="new-name-results"></div>
+        <button onclick="testNewNames()">Run Tests</button>
+    </div>
+
+    <div class="test-section">
+        <h2>3. File Structure Tests</h2>
+        <p>Verifying all refactored files exist and are loadable...</p>
+        <div id="file-structure-results"></div>
+        <button onclick="testFileStructure()">Run Tests</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Summary</h2>
+        <div id="summary"></div>
+    </div>
+
+    <!-- Load the refactored level files -->
+    <script src="GamesandLevelsWIP/4-digit-code-breaker.js"></script>
+    <script src="GamesandLevelsWIP/2-word-anagram-solver.js"></script>
+    <script src="GamesandLevelsWIP/magic-square-9-grid.js"></script>
+
+    <!-- Create hidden containers for testing -->
+    <div id="level-1" style="display:none;"></div>
+    <div id="level-2" style="display:none;"></div>
+    <div id="level-3" style="display:none;"></div>
+
+    <script>
+        let testResults = {
+            passed: 0,
+            failed: 0
+        };
+
+        function logResult(container, testName, passed, message = '') {
+            const div = document.createElement('div');
+            div.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `
+                <strong>${passed ? '✓' : '✗'} ${testName}</strong>
+                ${message ? `<br><small>${message}</small>` : ''}
+            `;
+            container.appendChild(div);
+            
+            if (passed) {
+                testResults.passed++;
+            } else {
+                testResults.failed++;
+            }
+            
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            const total = testResults.passed + testResults.failed;
+            const percentage = total > 0 ? Math.round((testResults.passed / total) * 100) : 0;
+            
+            summary.innerHTML = `
+                <h3>Results: ${testResults.passed} passed, ${testResults.failed} failed (${percentage}%)</h3>
+                <p>Total tests run: ${total}</p>
+            `;
+        }
+
+        function testBackwardCompatibility() {
+            const container = document.getElementById('backward-compat-results');
+            container.innerHTML = '<p>Running tests...</p>';
+            
+            // Test that old function names exist and are functions
+            const tests = [
+                { name: 'initLevel1', desc: 'Level 1 backward compat' },
+                { name: 'checkCode1', desc: 'Level 1 check function compat' },
+                { name: 'resetLevel1', desc: 'Level 1 reset function compat' },
+                { name: 'initLevel2', desc: 'Level 2 backward compat' },
+                { name: 'checkAnswer2', desc: 'Level 2 check function compat' },
+                { name: 'initLevel3', desc: 'Level 3 backward compat' }
+            ];
+            
+            container.innerHTML = '';
+            tests.forEach(test => {
+                const exists = typeof window[test.name] === 'function';
+                logResult(
+                    container, 
+                    test.desc, 
+                    exists, 
+                    exists ? `<code>${test.name}()</code> function exists` : `<code>${test.name}()</code> not found`
+                );
+            });
+        }
+
+        function testNewNames() {
+            const container = document.getElementById('new-name-results');
+            container.innerHTML = '<p>Running tests...</p>';
+            
+            // Test that new function names exist and are functions
+            const tests = [
+                { name: 'initCodeBreaker4Digit', desc: 'Level 1 new name' },
+                { name: 'submitCodeBreaker4Digit', desc: 'Level 1 submit function' },
+                { name: 'resetCodeBreaker4Digit', desc: 'Level 1 reset function' },
+                { name: 'initAnagramSolver2Word', desc: 'Level 2 new name' },
+                { name: 'submitAnagramSolver2Word', desc: 'Level 2 submit function' },
+                { name: 'initMagicSquare9Grid', desc: 'Level 3 new name' }
+            ];
+            
+            container.innerHTML = '';
+            tests.forEach(test => {
+                const exists = typeof window[test.name] === 'function';
+                logResult(
+                    container, 
+                    test.desc, 
+                    exists, 
+                    exists ? `<code>${test.name}()</code> function exists` : `<code>${test.name}()</code> not found`
+                );
+            });
+        }
+
+        function testFileStructure() {
+            const container = document.getElementById('file-structure-results');
+            container.innerHTML = '<p>Testing file loading...</p>';
+            
+            // Test that files are loaded by checking for their functions
+            const files = [
+                { file: '4-digit-code-breaker.js', func: 'initCodeBreaker4Digit' },
+                { file: '2-word-anagram-solver.js', func: 'initAnagramSolver2Word' },
+                { file: 'magic-square-9-grid.js', func: 'initMagicSquare9Grid' }
+            ];
+            
+            container.innerHTML = '';
+            files.forEach(test => {
+                const loaded = typeof window[test.func] === 'function';
+                logResult(
+                    container,
+                    `File: ${test.file}`,
+                    loaded,
+                    loaded ? 'Loaded successfully' : 'Failed to load or function not defined'
+                );
+            });
+
+            // Test that containers exist
+            const containers = ['level-1', 'level-2', 'level-3'];
+            containers.forEach(id => {
+                const exists = document.getElementById(id) !== null;
+                logResult(
+                    container,
+                    `Container: ${id}`,
+                    exists,
+                    exists ? 'Container element exists' : 'Container not found'
+                );
+            });
+        }
+
+        // Show initial state
+        updateSummary();
+    </script>
+</body>
+</html>
