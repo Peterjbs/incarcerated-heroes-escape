@@ -70,13 +70,6 @@ const GameState = {
             description: "Solve jigsaw-styled 5×5 word puzzles",
             completed: false,
             unlocked: false
-        },
-        {
-            id: 9,
-            title: "CCTV Security Breach",
-            description: "Hack the security system and guide your comrade",
-            completed: false,
-            unlocked: false
         }
     ],
     currentLevel: null

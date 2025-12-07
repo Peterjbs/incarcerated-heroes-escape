@@ -148,15 +148,16 @@
 
     <script>
         const levels = [
-            {num: 1, title: "Code Breaker", desc: "Crack a 4-digit security code with position/value feedback", type: "Logic"},
-            {num: 2, title: "Anagram Solver", desc: "Rearrange scrambled letters into adjective-noun pairs", type: "Word"},
-            {num: 3, title: "9-Number Grid", desc: "Magic square: all rows/columns/diagonals sum to 15", type: "Math", fixed: true},
-            {num: 4, title: "Advanced Code Breaker", desc: "6-digit code with 180s timer", type: "Timed"},
-            {num: 5, title: "Jiggy Puzzle", desc: "15-tile sliding puzzle", type: "Sliding"},
-            {num: 6, title: "Map Navigation", desc: "Collect 3 keys and reach exit", type: "Path"},
-            {num: 7, title: "Pathfinder Challenge", desc: "Canvas maze with enemies", type: "Maze"},
-            {num: 8, title: "Pathfinder Extreme", desc: "Advanced maze with checkpoints", type: "Maze"},
-            {num: 9, title: "Gate Master Maze", desc: "Toggle gates to guide allies", type: "Strategy"}
+            {num: 1, title: "4-Digit Code Breaker", desc: "Crack a 4-digit security code with position/value feedback", type: "Logic"},
+            {num: 2, title: "2-Word Anagram Solver", desc: "Rearrange scrambled letters into adjective-noun pairs", type: "Word"},
+            {num: 3, title: "Magic Square 9-Grid", desc: "Magic square: all rows/columns/diagonals sum to 15", type: "Math", fixed: true},
+            {num: 4, title: "6-Digit Timed Code Breaker", desc: "6-digit code with 180s timer", type: "Timed"},
+            {num: 5, title: "Sliding Tile 15-Puzzle", desc: "15-tile sliding puzzle", type: "Sliding"},
+            {num: 6, title: "Key Collection Map Nav", desc: "Collect 3 keys and reach exit", type: "Path"},
+            {num: 7, title: "Enemy Patrol Maze", desc: "Canvas maze with moving enemies", type: "Maze"},
+            {num: 8, title: "Checkpoint Extreme Maze", desc: "Advanced maze with checkpoints", type: "Maze"},
+            {num: 9, title: "Gate Control Strategy Maze", desc: "Toggle gates to guide allies and trap enemies", type: "Strategy"},
+            {num: 10, title: "Jigsaw Word Grid 5×5", desc: "Solve 5×5 crossword with jigsaw-shaped tiles", type: "Word"}
         ];
 
         const grid = document.getElementById('levelGrid');
@@ -173,9 +174,9 @@
         });
 
         function openLevel(num) {
-            // Set localStorage to unlock all levels
+            // Set localStorage to unlock all levels (now 10 levels)
             const gameState = {
-                levels: Array.from({length: 9}, (_, i) => ({
+                levels: Array.from({length: 10}, (_, i) => ({
                     id: i + 1,
                     completed: false,
                     unlocked: true

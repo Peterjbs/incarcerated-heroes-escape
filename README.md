@@ -105,22 +105,80 @@ Your progress is automatically saved in your browser's localStorage. You can:
 ### Project Structure
 ```
 incarcerated-heroes-escape/
-├── index.html          # Main game entry point
-├── styles.css          # Global styles and theme
-├── game.js            # Core game state management
-├── levels/            # Individual level implementations
-│   ├── level1.js      # Code Breaker
-│   ├── level2.js      # Anagram Solver
-│   ├── level3.js      # 9-Number Grid (Magic Square)
-│   ├── level4.js      # Advanced Code Breaker
-│   ├── level5.js      # Jiggy Puzzle (Sliding Tiles)
-│   ├── level6.js      # Map Navigation
-│   ├── level7.js      # Pathfinder Challenge
-│   ├── level8.js      # Pathfinder Extreme
-│   ├── level9.js      # Gate Master Maze
-│   └── level10.js     # Word Grid Challenge (NEW)
-└── README.md          # This file
+├── index.html                  # Main game entry point
+├── styles.css                  # Global styles and theme
+├── game.js                     # Core game state management
+├── levels/                     # Original level implementations (legacy)
+│   ├── level1.js              # Code Breaker
+│   ├── level2.js              # Anagram Solver
+│   ├── level3.js              # 9-Number Grid (Magic Square)
+│   ├── level4.js              # Advanced Code Breaker
+│   ├── level5.js              # Jiggy Puzzle (Sliding Tiles)
+│   ├── level6.js              # Map Navigation
+│   ├── level7.js              # Pathfinder Challenge
+│   ├── level8.js              # Pathfinder Extreme
+│   ├── level9.js              # Gate Master Maze
+│   └── level10.js             # Word Grid Challenge
+├── GamesandLevelsWIP/         # Refactored levels with descriptive names
+│   ├── 4-digit-code-breaker.js
+│   ├── 2-word-anagram-solver.js
+│   ├── magic-square-9-grid.js
+│   ├── 6-digit-timed-code-breaker.js
+│   ├── sliding-tile-15-puzzle.js
+│   ├── key-collection-map-nav.js
+│   ├── enemy-patrol-maze.js
+│   ├── checkpoint-extreme-maze.js
+│   ├── gate-control-strategy-maze.js
+│   ├── jigsaw-word-grid-5x5.js
+│   └── README.md              # Detailed level documentation
+├── MIGRATION-GUIDE.md         # Old → New level naming reference
+├── WIPandMINIGAMEISSUES.md   # Known issues and development notes
+└── README.md                  # This file
 ```
+
+### Level Naming Refactoring
+
+**New in this version**: All levels have been refactored with descriptive names in the `GamesandLevelsWIP/` directory. This improves code maintainability and makes it easier to identify and work with specific minigames.
+
+See `MIGRATION-GUIDE.md` for the complete mapping from old to new names, and `GamesandLevelsWIP/README.md` for detailed documentation of each level's mechanics and features.
+
+**Backward Compatibility**: All refactored files include compatibility aliases, so existing code continues to work without changes.
+
+## 🔄 Level Refactoring & Organization
+
+### Descriptive Level Names
+
+All game levels have been refactored from generic `levelX.js` names to descriptive, searchable names:
+
+| Level # | Original Name | New Descriptive Name |
+|---------|---------------|----------------------|
+| 1 | level1.js | **4-digit-code-breaker.js** |
+| 2 | level2.js | **2-word-anagram-solver.js** |
+| 3 | level3.js | **magic-square-9-grid.js** |
+| 4 | level4.js | **6-digit-timed-code-breaker.js** |
+| 5 | level5.js | **sliding-tile-15-puzzle.js** |
+| 6 | level6.js | **key-collection-map-nav.js** |
+| 7 | level7.js | **enemy-patrol-maze.js** |
+| 8 | level8.js | **checkpoint-extreme-maze.js** |
+| 9 | level9.js | **gate-control-strategy-maze.js** |
+| 10 | level10.js | **jigsaw-word-grid-5x5.js** |
+
+### Benefits of Refactoring
+
+- ✅ **Clarity**: Easy to identify levels by gameplay type
+- ✅ **Maintainability**: Descriptive names improve code navigation
+- ✅ **Extensibility**: Add new levels without numbering conflicts
+- ✅ **Documentation**: Each file includes comprehensive JSDoc headers
+- ✅ **Backward Compatible**: Old function names still work via aliases
+
+### For Developers
+
+See the detailed documentation:
+- **GamesandLevelsWIP/README.md** - Complete level documentation
+- **MIGRATION-GUIDE.md** - Old → New naming reference
+- **WIPandMINIGAMEISSUES.md** - Known issues and development notes
+
+All refactored files maintain backward compatibility, so no code changes are required to use them.
 
 ### Browser Compatibility
 - Chrome/Edge 90+
