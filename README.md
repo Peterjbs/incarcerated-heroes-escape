@@ -117,7 +117,7 @@ incarcerated-heroes-escape/
 │   ├── level6.js      # Map Navigation
 │   ├── level7.js      # Pathfinder Challenge
 │   ├── level8.js      # Pathfinder Extreme
-│   ├── level9.js      # Gate Master Maze
+│   ├── vital_signs.js # Gate Master Maze
 │   └── level10.js     # Word Grid Challenge (NEW)
 └── README.md          # This file
 ```
