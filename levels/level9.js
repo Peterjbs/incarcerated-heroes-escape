@@ -17,25 +17,31 @@ function initLevel9() {
             </div>
             
             <div class="level-narrative">
-                You've tapped into the prison's security network. Navigate the facility's walls and rooms
-                while ten cameras monitor every corner. Watch for patrol guards, flying drones, and security robots.
-                A bionic kangaroo and its joey have also escaped and are frantically searching for each other!
-                For each camera, wait for a clear view with no activity, record a 20-second loop, and upload it 
-                to fool the system. Then observe guard patrol routes and guide your comrade to the control room 
-                without detection.
+                Welcome to the AR Meta-Incarceration Facility - a vast underground dystopian prison run by automated
+                systems. You and your tribe have been captured by the Orwellian overlord. Navigate through the massive,
+                sterile labyrinth of brutalist architecture: holding chambers, security corridors, automated checkpoints,
+                and endless atriums. Hack the cameras monitoring this clinical nightmare, observe drone patrols and
+                robotic guards, then guide your comrade through the maze to the central control room.
             </div>
             
             <div class="puzzle-container">
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
                     <!-- Heatmap View -->
-                    <div style="flex: 1; min-width: 400px;">
-                        <h3 style="margin-bottom: 15px; text-align: center;">Security Overview</h3>
-                        <canvas id="heatmap-canvas" width="500" height="500" 
-                                style="border: 3px solid var(--highlight-color); border-radius: 8px; 
-                                       background: #0a0a0a; max-width: 100%; cursor: pointer;"></canvas>
+                    <div style="flex: 1; min-width: 600px;">
+                        <h3 style="margin-bottom: 15px; text-align: center;">Security Overview - AR Meta-Incarceration Facility</h3>
+                        <div style="position: relative; overflow: hidden; border: 3px solid var(--highlight-color); border-radius: 8px; background: #0a0a0a;">
+                            <canvas id="heatmap-canvas" width="1200" height="900" 
+                                    style="cursor: grab; display: block;"></canvas>
+                        </div>
+                        <div id="heatmap-controls" style="margin-top: 10px; text-align: center;">
+                            <button id="zoom-in-btn" class="btn btn-secondary" style="padding: 5px 15px; margin: 0 5px;">🔍 Zoom In</button>
+                            <button id="zoom-out-btn" class="btn btn-secondary" style="padding: 5px 15px; margin: 0 5px;">🔍 Zoom Out</button>
+                            <button id="reset-view-btn" class="btn btn-secondary" style="padding: 5px 15px; margin: 0 5px;">↺ Reset View</button>
+                            <span id="zoom-level" style="margin-left: 15px; opacity: 0.8;">Zoom: 100%</span>
+                        </div>
                         <div id="heatmap-legend" style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8; text-align: center;">
                             🔵 Cameras | 🔴 Guards | 🟢 Comrade | ⭐ Control Room<br>
-                            🚁 Drones | 🤖 Robots | 🦘 Escaped Kangaroos
+                            🚁 Drones | 🤖 Robots | 🦘 Escaped Kangaroos | 🚪 Security Doors
                         </div>
                     </div>
                     
