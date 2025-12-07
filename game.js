@@ -70,6 +70,20 @@ const GameState = {
             description: "Solve jigsaw-styled 5×5 word puzzles",
             completed: false,
             unlocked: false
+        },
+        {
+            id: 11,
+            title: "CCTV Security Breach",
+            description: "Hack the security system and guide your comrade",
+            completed: false,
+            unlocked: false
+        },
+        {
+            id: 12,
+            title: "Vital Signs Subterfuge",
+            description: "Extract trackers and deceive surveillance",
+            completed: false,
+            unlocked: false
         }
     ],
     currentLevel: null

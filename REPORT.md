@@ -35,7 +35,7 @@ This comprehensive audit identified **10 unique playable levels** in the reposit
 | 6 | **Map Navigation** | `levels/level6.js` | Grid-based pathfinding with 3 keys to collect before exit | ✅ Playable | Current Build |
 | 7 | **Pathfinder Challenge** | `levels/level7.js` | Canvas maze with patrolling enemies (WASD/Arrow keys) | ✅ Playable | Current Build |
 | 8 | **Pathfinder Extreme** | `levels/level8.js` | Advanced maze with checkpoints and faster enemies | ✅ Playable | Current Build |
-| 9 | **Gate Master Maze** | `levels/level9.js` | Strategic gate control: toggle gates to guide allies and trap enemies | ✅ Playable | Current Build |
+| 9 | **Gate Master Maze** | `levels/vital_signs.js` | Strategic gate control: toggle gates to guide allies and trap enemies | ✅ Playable | Current Build |
 
 ### Main Branch (Recently Merged): 10 Levels
 
@@ -426,7 +426,7 @@ incarcerated-heroes-escape/
 │   ├── level6.js          # Map Navigation
 │   ├── level7.js          # Pathfinder Challenge
 │   ├── level8.js          # Pathfinder Extreme
-│   ├── level9.js          # Gate Master Maze
+│   ├── vital_signs.js     # Gate Master Maze
 │   └── level10.js         # Word Grid (main branch only)
 ├── test/                   # Testing infrastructure
 │   ├── index.html         # Testing navigation page
