@@ -558,8 +558,8 @@
             
             // Wood gradient background (deterministic based on tile position)
             // Handle both prefilled tiles (row/col) and tray tiles (targetRow/targetCol)
-            const tileRow = tile.targetRow !== undefined ? tile.targetRow : tile.row;
-            const tileCol = tile.targetCol !== undefined ? tile.targetCol : tile.col;
+            const tileRow = tile.targetRow ?? tile.row;
+            const tileCol = tile.targetCol ?? tile.col;
             const woodIndex = (tileRow * 5 + tileCol) % WOOD_COLORS.length;
             const woodSet = WOOD_COLORS[woodIndex];
             const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
