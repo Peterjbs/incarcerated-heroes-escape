@@ -183,15 +183,8 @@
             };
             localStorage.setItem('gameState', JSON.stringify(gameState));
             
-            // Navigate to level
-            window.location.href = `../index.html#level-${num}`;
-            
-            // Trigger level start after navigation
-            setTimeout(() => {
-                if (window.parent.startLevel) {
-                    window.parent.startLevel(num);
-                }
-            }, 100);
+            // Navigate to main game and let it handle level loading
+            window.location.href = `../index.html`;
         }
     </script>
 </body>
