@@ -93,31 +93,70 @@ This document tracks known issues, incomplete features, and work-in-progress ite
 
 ## Known Issues
 
-### 1. Duplicate Level ID in game.js
+### 1. Duplicate Level ID in game.js ✅ FIXED
 - **Severity**: High
 - **Location**: game.js lines 61-80
-- **Description**: Level ID 9 appears twice in GameState.levels array
+- **Description**: Level ID 9 appeared twice in GameState.levels array
   - First: "Gate Master Maze"
   - Second: "CCTV Security Breach"
-- **Impact**: May cause issues with level progression and state management
-- **Recommended Fix**: 
-  - Option A: Remove duplicate if CCTV is not implemented
-  - Option B: Change CCTV to ID 11 if it's a planned future level
-  - Option C: Investigate if CCTV is an alternate version of level 9
+- **Impact**: Could cause issues with level progression and state management
+- **Status**: ✅ FIXED - Removed duplicate CCTV Security Breach entry
 
-### 2. Test Page Missing Level 10
+### 2. Test Page Missing Level 10 ✅ FIXED
 - **Severity**: Low
 - **Location**: test/index.html
-- **Description**: Testing interface only shows 9 levels, missing level 10
+- **Description**: Testing interface only showed 9 levels, missing level 10
 - **Impact**: Cannot test level 10 from testing interface
-- **Recommended Fix**: Add level 10 to the levels array in test/index.html
+- **Status**: ✅ FIXED - Added level 10 to levels array
 
-### 3. Inconsistent Level Count
+### 3. Inconsistent Level Count ✅ FIXED
 - **Severity**: Medium
 - **Location**: Multiple files
-- **Description**: README says "10 levels" but some references say "8 levels"
+- **Description**: README said "10 levels" but some references said "8 levels"
 - **Impact**: Documentation confusion
-- **Recommended Fix**: Standardize all references to current count (10 levels)
+- **Status**: ✅ FIXED - Standardized all references to 10 levels
+
+### 4. Jigsaw Shape Matching Not Implemented (Pre-existing)
+- **Severity**: Medium
+- **Location**: GamesandLevelsWIP/jigsaw-word-grid-5x5.js, lines 642-646
+- **Description**: Shape matching function returns true for all shapes, bypassing puzzle constraints
+- **Impact**: Jigsaw puzzle mechanic doesn't enforce shape matching
+- **Status**: ⚠️ Pre-existing issue in original level10.js - not introduced by refactoring
+- **Note**: Game is still playable, just less challenging
+
+### 5. Gate Control Maze Code Duplication (Pre-existing)
+- **Severity**: Low
+- **Location**: GamesandLevelsWIP/gate-control-strategy-maze.js, lines 524-526
+- **Description**: Maze data appears to be initialized twice with different implementations
+- **Impact**: Potential confusion, but doesn't affect functionality
+- **Status**: ⚠️ Pre-existing issue in original level9.js - not introduced by refactoring
+
+### 6. Missing Heatmap Canvas (Pre-existing)
+- **Severity**: Low
+- **Location**: GamesandLevelsWIP/gate-control-strategy-maze.js, lines 188-189
+- **Description**: Code tries to add event listener to 'heatmap-canvas' that doesn't exist
+- **Impact**: Runtime error when canvas is null (non-critical)
+- **Status**: ⚠️ Pre-existing issue in original level9.js - not introduced by refactoring
+
+### 7. Magic Number in Test (Code Review Finding)
+- **Severity**: Nitpick
+- **Location**: test/index.html, line 179
+- **Description**: Hard-coded number 10 for level count could be a named constant
+- **Impact**: Minor maintainability improvement
+- **Recommended Fix**: `const TOTAL_LEVELS = 10;`
+- **Status**: ⏳ Optional improvement
+
+## Important Note on Pre-existing Issues
+
+Issues #4, #5, and #6 were **already present in the original level files** (level9.js, level10.js). The refactoring process **preserved the original functionality** without introducing new bugs. These issues were simply copied over during the refactoring.
+
+Since the goal of this refactoring was to:
+1. Rename files with descriptive names
+2. Add documentation
+3. Maintain backward compatibility
+4. Not fix unrelated bugs
+
+We intentionally did **not** fix these pre-existing issues to minimize scope and risk. They can be addressed in future PRs focused on bug fixes.
 
 ## Development Notes
 
