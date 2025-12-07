@@ -17,10 +17,12 @@ function initLevel9() {
             </div>
             
             <div class="level-narrative">
-                You've tapped into the prison's security network. Ten cameras monitor the facility,
-                but the guards are watching. For each camera, wait for a clear view with no activity,
-                record a 20-second loop, and upload it to fool the system. Then observe guard patrol
-                routes and guide your comrade to the control room without detection.
+                You've tapped into the prison's security network. Navigate the facility's walls and rooms
+                while ten cameras monitor every corner. Watch for patrol guards, flying drones, and security robots.
+                A bionic kangaroo and its joey have also escaped and are frantically searching for each other!
+                For each camera, wait for a clear view with no activity, record a 20-second loop, and upload it 
+                to fool the system. Then observe guard patrol routes and guide your comrade to the control room 
+                without detection.
             </div>
             
             <div class="puzzle-container">
@@ -32,7 +34,8 @@ function initLevel9() {
                                 style="border: 3px solid var(--highlight-color); border-radius: 8px; 
                                        background: #0a0a0a; max-width: 100%; cursor: pointer;"></canvas>
                         <div id="heatmap-legend" style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8; text-align: center;">
-                            🔵 Cameras | 🔴 Guards | 🟢 Comrade | ⭐ Control Room
+                            🔵 Cameras | 🔴 Guards | 🟢 Comrade | ⭐ Control Room<br>
+                            🚁 Drones | 🤖 Robots | 🦘 Escaped Kangaroos
                         </div>
                     </div>
                     
@@ -77,18 +80,32 @@ function initLevel9() {
     const gridSize = 10;
     const cellSize = 50;
     
-    // Camera positions (distributed across the facility)
+    // Facility map with walls and rooms (0 = path, 1 = wall, 2 = room)
+    const facilityMap = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 2],  // Row 0 - Control room at top right
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0],  // Row 1
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 0],  // Row 2
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],  // Row 3
+        [1, 1, 1, 0, 1, 1, 1, 0, 1, 0],  // Row 4
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  // Row 5
+        [0, 1, 1, 0, 1, 1, 1, 0, 0, 0],  // Row 6
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  // Row 7
+        [1, 1, 0, 1, 1, 1, 0, 1, 1, 0],  // Row 8
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   // Row 9 - Start position bottom left
+    ];
+    
+    // Camera positions with viewing angles (distributed across the facility)
     const cameras = [
-        { id: 1, x: 1, y: 1, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 2, x: 8, y: 1, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 3, x: 1, y: 5, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 4, x: 8, y: 5, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 5, x: 5, y: 2, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 6, x: 2, y: 8, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 7, x: 8, y: 8, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 8, x: 5, y: 5, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 9, x: 3, y: 3, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
-        { id: 10, x: 6, y: 7, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 }
+        { id: 1, x: 1, y: 1, angle: 45, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 2, x: 8, y: 1, angle: 225, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 3, x: 1, y: 5, angle: 0, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 4, x: 8, y: 5, angle: 180, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 5, x: 5, y: 2, angle: 270, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 6, x: 2, y: 8, angle: 90, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 7, x: 8, y: 8, angle: 315, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 8, x: 5, y: 5, angle: 180, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 9, x: 3, y: 3, angle: 135, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 },
+        { id: 10, x: 6, y: 7, angle: 45, viewRange: 4, hacked: false, recording: false, uploaded: false, hasActivity: true, activityTimer: 0 }
     ];
     
     // Guard patrol routes
@@ -98,6 +115,33 @@ function initLevel9() {
         { x: 4, y: 7, path: [[4,7], [6,7], [6,9], [4,9]], pathIndex: 0, color: '#e67e22' }
     ];
     
+    // Flying objects (drones and robots)
+    const flyingObjects = [
+        { type: 'drone', x: 2, y: 1, vx: 0.1, vy: 0.05, emoji: '🚁' },
+        { type: 'robot', x: 7, y: 4, vx: -0.08, vy: 0.1, emoji: '🤖' },
+        { type: 'drone', x: 4, y: 6, vx: 0.12, vy: -0.06, emoji: '🛸' }
+    ];
+    
+    // Escaped bionic kangaroo and joey
+    const kangaroo = { 
+        x: Math.random() * 8 + 1, 
+        y: Math.random() * 8 + 1, 
+        vx: 0, 
+        vy: 0,
+        searchTimer: 0,
+        emoji: '🦘',
+        size: 0.4
+    };
+    const joey = { 
+        x: Math.random() * 8 + 1, 
+        y: Math.random() * 8 + 1, 
+        vx: 0, 
+        vy: 0,
+        searchTimer: 0,
+        emoji: '🦘',
+        size: 0.25
+    };
+    
     // Comrade position and destination
     const comrade = { x: 0, y: 9, moving: false, path: [], pathIndex: 0 };
     const controlRoom = { x: 9, y: 0 };
@@ -105,10 +149,14 @@ function initLevel9() {
     window.level9Data = {
         gridSize,
         cellSize,
+        facilityMap,
         cameras,
         guards,
         comrade,
         controlRoom,
+        flyingObjects,
+        kangaroo,
+        joey,
         activeCamera: null,
         recordingProgress: 0,
         uploadProgress: 0,
@@ -381,20 +429,63 @@ function renderHeatmap() {
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= data.gridSize; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * data.cellSize, 0);
-        ctx.lineTo(i * data.cellSize, canvas.height);
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.moveTo(0, i * data.cellSize);
-        ctx.lineTo(canvas.width, i * data.cellSize);
-        ctx.stroke();
+    // Draw facility map (walls and rooms)
+    for (let y = 0; y < data.gridSize; y++) {
+        for (let x = 0; x < data.gridSize; x++) {
+            const cellType = data.facilityMap[y][x];
+            const px = x * data.cellSize;
+            const py = y * data.cellSize;
+            
+            if (cellType === 1) {
+                // Wall
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(px, py, data.cellSize - 1, data.cellSize - 1);
+                // Add texture
+                ctx.strokeStyle = '#34495e';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(px + 2, py + 2, data.cellSize - 5, data.cellSize - 5);
+            } else if (cellType === 2) {
+                // Room (control room)
+                ctx.fillStyle = '#16a085';
+                ctx.fillRect(px, py, data.cellSize - 1, data.cellSize - 1);
+            } else {
+                // Path - draw grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(px, py, data.cellSize, data.cellSize);
+            }
+        }
     }
+    
+    // Draw camera line of sight (radar-like view)
+    data.cameras.forEach(cam => {
+        if (cam.hacked || data.phase === 'guiding') {
+            ctx.save();
+            ctx.globalAlpha = 0.15;
+            ctx.fillStyle = cam.hacked ? '#2ecc71' : '#3498db';
+            
+            const cx = cam.x * data.cellSize + data.cellSize / 2;
+            const cy = cam.y * data.cellSize + data.cellSize / 2;
+            const angleRad = (cam.angle * Math.PI) / 180;
+            const viewAngle = 90 * Math.PI / 180; // 90 degree FOV
+            
+            // Draw cone of vision
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, cam.viewRange * data.cellSize, 
+                   angleRad - viewAngle/2, angleRad + viewAngle/2);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw radar sweep effect
+            ctx.strokeStyle = cam.hacked ? '#2ecc71' : '#3498db';
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.3;
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+    });
     
     // Draw heatmap for guard activity (recent positions)
     if (data.phase === 'guiding') {
@@ -406,7 +497,7 @@ function renderHeatmap() {
         });
     }
     
-    // Draw control room
+    // Draw control room marker
     ctx.fillStyle = '#f39c12';
     ctx.beginPath();
     ctx.arc(
@@ -442,6 +533,64 @@ function renderHeatmap() {
         ctx.textAlign = 'center';
         ctx.fillText(cam.id, cam.x * data.cellSize + data.cellSize / 2, 
                              cam.y * data.cellSize + data.cellSize / 2 + 4);
+        
+        // Direction indicator
+        const angleRad = (cam.angle * Math.PI) / 180;
+        const dx = Math.cos(angleRad) * data.cellSize / 3;
+        const dy = Math.sin(angleRad) * data.cellSize / 3;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cam.x * data.cellSize + data.cellSize / 2, 
+                   cam.y * data.cellSize + data.cellSize / 2);
+        ctx.lineTo(cam.x * data.cellSize + data.cellSize / 2 + dx,
+                   cam.y * data.cellSize + data.cellSize / 2 + dy);
+        ctx.stroke();
+    });
+    
+    // Draw flying objects (drones and robots)
+    data.flyingObjects.forEach(obj => {
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(obj.emoji, 
+                    obj.x * data.cellSize + data.cellSize / 2,
+                    obj.y * data.cellSize + data.cellSize / 2 + 7);
+        
+        // Add glow effect
+        ctx.save();
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 10;
+        ctx.fillText(obj.emoji, 
+                    obj.x * data.cellSize + data.cellSize / 2,
+                    obj.y * data.cellSize + data.cellSize / 2 + 7);
+        ctx.restore();
+    });
+    
+    // Draw bionic kangaroo and joey
+    [data.kangaroo, data.joey].forEach(roo => {
+        const size = roo.size * data.cellSize;
+        ctx.font = `${size}px Arial`;
+        ctx.textAlign = 'center';
+        
+        // Add search beam effect
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = '#ffeb3b';
+        ctx.beginPath();
+        ctx.arc(roo.x * data.cellSize + data.cellSize / 2,
+                roo.y * data.cellSize + data.cellSize / 2,
+                data.cellSize * 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        
+        // Draw kangaroo
+        ctx.save();
+        ctx.shadowColor = '#ffeb3b';
+        ctx.shadowBlur = 15;
+        ctx.fillText(roo.emoji, 
+                    roo.x * data.cellSize + data.cellSize / 2,
+                    roo.y * data.cellSize + data.cellSize / 2 + size/3);
+        ctx.restore();
     });
     
     // Draw guards
@@ -513,6 +662,54 @@ function renderHeatmap() {
 function updateGame9() {
     const data = window.level9Data;
     if (!data || !data.gameActive) return;
+    
+    // Update flying objects
+    data.flyingObjects.forEach(obj => {
+        obj.x += obj.vx;
+        obj.y += obj.vy;
+        
+        // Bounce off edges
+        if (obj.x < 0 || obj.x > data.gridSize) {
+            obj.vx *= -1;
+            obj.x = Math.max(0, Math.min(data.gridSize, obj.x));
+        }
+        if (obj.y < 0 || obj.y > data.gridSize) {
+            obj.vy *= -1;
+            obj.y = Math.max(0, Math.min(data.gridSize, obj.y));
+        }
+    });
+    
+    // Update kangaroo and joey - they search for each other
+    [data.kangaroo, data.joey].forEach((roo, idx) => {
+        const other = idx === 0 ? data.joey : data.kangaroo;
+        const dx = other.x - roo.x;
+        const dy = other.y - roo.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // If close enough, they found each other - celebrate briefly then separate
+        if (distance < 0.5) {
+            roo.searchTimer = 10; // Wait 5 seconds before searching again
+            // Jump away in random direction
+            roo.vx = (Math.random() - 0.5) * 0.3;
+            roo.vy = (Math.random() - 0.5) * 0.3;
+        } else if (roo.searchTimer > 0) {
+            roo.searchTimer--;
+            // Random hop movement
+            roo.x += roo.vx;
+            roo.y += roo.vy;
+        } else {
+            // Move towards each other
+            const speed = 0.05;
+            roo.vx = (dx / distance) * speed;
+            roo.vy = (dy / distance) * speed;
+            roo.x += roo.vx;
+            roo.y += roo.vy;
+        }
+        
+        // Keep in bounds and avoid walls
+        roo.x = Math.max(0.5, Math.min(data.gridSize - 0.5, roo.x));
+        roo.y = Math.max(0.5, Math.min(data.gridSize - 0.5, roo.y));
+    });
     
     // Update camera activity randomly
     data.cameras.forEach(cam => {
