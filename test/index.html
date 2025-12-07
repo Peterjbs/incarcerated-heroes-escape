@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Testing - Incarcerated Heroes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --highlight-color: #e94560;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --text-light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px solid var(--highlight-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--highlight-color);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .level-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--highlight-color);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+        }
+
+        .level-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--highlight-color);
+        }
+
+        .level-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .level-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--highlight-color), #c7355f);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .fixed-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Level Testing Interface</h1>
+            <p class="subtitle">Incarcerated Heroes: Labyrinth Escape</p>
+            <div class="info-box">
+                <strong>✓ All levels unlocked</strong> - Click any level to start testing immediately
+            </div>
+        </header>
+
+        <div class="level-grid" id="levelGrid"></div>
+    </div>
+
+    <script>
+        const levels = [
+            {num: 1, title: "Code Breaker", desc: "Crack a 4-digit security code with position/value feedback", type: "Logic"},
+            {num: 2, title: "Anagram Solver", desc: "Rearrange scrambled letters into adjective-noun pairs", type: "Word"},
+            {num: 3, title: "9-Number Grid", desc: "Magic square: all rows/columns/diagonals sum to 15", type: "Math", fixed: true},
+            {num: 4, title: "Advanced Code Breaker", desc: "6-digit code with 180s timer", type: "Timed"},
+            {num: 5, title: "Jiggy Puzzle", desc: "15-tile sliding puzzle", type: "Sliding"},
+            {num: 6, title: "Map Navigation", desc: "Collect 3 keys and reach exit", type: "Path"},
+            {num: 7, title: "Pathfinder Challenge", desc: "Canvas maze with enemies", type: "Maze"},
+            {num: 8, title: "Pathfinder Extreme", desc: "Advanced maze with checkpoints", type: "Maze"},
+            {num: 9, title: "Gate Master Maze", desc: "Toggle gates to guide allies", type: "Strategy"}
+        ];
+
+        const grid = document.getElementById('levelGrid');
+        levels.forEach(level => {
+            const card = document.createElement('div');
+            card.className = 'level-card';
+            card.innerHTML = `
+                <div class="level-number">Level ${level.num}</div>
+                <div class="level-title">${level.title}${level.fixed ? '<span class="fixed-badge">FIXED</span>' : ''}</div>
+                <div class="level-description">${level.desc}</div>
+                <a href="javascript:openLevel(${level.num})" class="btn">▶ Play Now</a>
+            `;
+            grid.appendChild(card);
+        });
+
+        function openLevel(num) {
+            // Set localStorage to unlock all levels
+            const gameState = {
+                levels: Array.from({length: 9}, (_, i) => ({
+                    id: i + 1,
+                    completed: false,
+                    unlocked: true
+                }))
+            };
+            localStorage.setItem('gameState', JSON.stringify(gameState));
+            
+            // Navigate to main game and let it handle level loading
+            window.location.href = `../index.html`;
+        }
+    </script>
+</body>
+</html>

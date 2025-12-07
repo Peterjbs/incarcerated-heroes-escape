@@ -17,43 +17,57 @@ const GameState = {
         },
         {
             id: 3,
-            title: "Math Grid Puzzle",
-            description: "Complete the mathematical equations",
+            title: "9-Number Grid",
+            description: "Arrange numbers 1-9 in the magic grid",
             completed: false,
             unlocked: false
         },
         {
             id: 4,
-            title: "Filtered Match Breaker",
-            description: "Generate and match code sequences",
+            title: "Advanced Code Breaker",
+            description: "Master the enhanced codebreaking challenge",
             completed: false,
             unlocked: false
         },
         {
             id: 5,
-            title: "Grouped Score Breaker",
-            description: "Find matching patterns in the database",
+            title: "Jiggy Puzzle",
+            description: "Solve the sliding tile puzzle",
             completed: false,
             unlocked: false
         },
         {
             id: 6,
-            title: "Tactical Trivia Slots",
-            description: "Answer questions to control your fate",
+            title: "Map Navigation",
+            description: "Find the path through the treacherous map",
             completed: false,
             unlocked: false
         },
         {
             id: 7,
-            title: "Predator Prey Dungeon",
-            description: "Navigate the maze while avoiding enemies",
+            title: "Pathfinder Challenge",
+            description: "Navigate the complex pathfinding maze",
             completed: false,
             unlocked: false
         },
         {
             id: 8,
-            title: "Final Synthesis",
-            description: "Use all your skills for the ultimate escape",
+            title: "Pathfinder Extreme",
+            description: "Master the ultimate pathfinding test",
+            completed: false,
+            unlocked: false
+        },
+        {
+            id: 9,
+            title: "Gate Master Maze",
+            description: "Lock and unlock gates to escape the final labyrinth",
+            completed: false,
+            unlocked: false
+        },
+        {
+            id: 10,
+            title: "Word Grid Challenge",
+            description: "Solve jigsaw-styled 5×5 word puzzles",
             completed: false,
             unlocked: false
         },
