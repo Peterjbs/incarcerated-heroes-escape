@@ -352,14 +352,22 @@ function renderCameraList() {
         const statusColor = cam.uploaded ? 'var(--success-color)' : cam.recording ? 'var(--warning-color)' : cam.hasActivity ? '#e74c3c' : '#3498db';
         
         return `
-            <div style="padding: 10px; margin-bottom: 8px; background: rgba(255,255,255,0.05); border-radius: 5px; 
-                        border-left: 3px solid ${statusColor}; cursor: ${cam.uploaded ? 'default' : 'pointer'};"
-                 onclick="${cam.uploaded ? '' : `openCameraView(window.level9Data.cameras[${cam.id - 1}])`}">
+            <div class="camera-item" data-camera-id="${cam.id}" style="padding: 10px; margin-bottom: 8px; background: rgba(255,255,255,0.05); border-radius: 5px; 
+                        border-left: 3px solid ${statusColor}; cursor: ${cam.uploaded ? 'default' : 'pointer'};">
                 <div style="font-weight: bold;">Camera ${cam.id}</div>
                 <div style="font-size: 0.9rem; opacity: 0.8; color: ${statusColor};">${status}</div>
             </div>
         `;
     }).join('');
+    
+    // Add event listeners to camera items
+    listDiv.querySelectorAll('.camera-item').forEach(item => {
+        const cameraId = parseInt(item.getAttribute('data-camera-id'));
+        const camera = data.cameras.find(c => c.id === cameraId);
+        if (camera && !camera.uploaded) {
+            item.addEventListener('click', () => openCameraView(camera));
+        }
+    });
 }
 
 function renderHeatmap() {
@@ -614,14 +622,13 @@ function startGuidingComrade() {
     // Create a safe path (going around guard patrol zones)
     // Path: (0,9) -> (0,0) -> (9,0)
     while (cy > 0) {
-        path.push([cx, cy]);
         cy--;
+        path.push([cx, cy]);
     }
     while (cx < data.controlRoom.x) {
-        path.push([cx, cy]);
         cx++;
+        path.push([cx, cy]);
     }
-    path.push([data.controlRoom.x, data.controlRoom.y]);
     
     data.comrade.path = path;
     data.comrade.pathIndex = 0;
