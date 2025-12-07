@@ -59,8 +59,8 @@ const GameState = {
         },
         {
             id: 9,
-            title: "Vital Signs Monitor",
-            description: "Manage tracking devices and mimic heartbeats",
+            title: "Vital Signs Subterfuge",
+            description: "Extract trackers and deceive surveillance",
             completed: false,
             unlocked: false
         }
