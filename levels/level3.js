@@ -28,7 +28,7 @@ function initLevel3() {
                         </div>
                     </div>
                     
-                    <div id="magic-grid" style="display: inline-block; margin: 30px auto;">
+                    <div id="magic-grid" style="margin: 30px auto;">
                         <!-- Grid will be generated here -->
                     </div>
                     

@@ -52,11 +52,31 @@ Visit the live game at: `https://peterjbs.github.io/incarcerated-heroes-escape/`
 3. Open `index.html` in your web browser:
    - **Windows**: Double-click `index.html`
    - **Mac/Linux**: Right-click → Open With → Your preferred browser
-   - **Or use a local server**:
+   - **Or use a local server** (recommended):
      ```bash
      python -m http.server 8000
      # Then visit http://localhost:8000 in your browser
      ```
+
+### Testing/Development Mode
+
+For testing and QA purposes, use the dedicated testing interface:
+
+```bash
+# Start local server
+python -m http.server 8000
+
+# Navigate to testing page
+http://localhost:8000/test/
+```
+
+The testing interface provides:
+- ✅ All levels unlocked automatically
+- ✅ One-click access to any level
+- ✅ Quick navigation for QA testing
+- ✅ Level status indicators
+
+See `test/README.md` for detailed testing documentation.
 
 ## 🎮 Controls
 
