@@ -63,6 +63,13 @@ const GameState = {
             description: "Lock and unlock gates to escape the final labyrinth",
             completed: false,
             unlocked: false
+        },
+        {
+            id: 10,
+            title: "Word Grid Challenge",
+            description: "Solve jigsaw-styled 5×5 word puzzles",
+            completed: false,
+            unlocked: false
         }
     ],
     currentLevel: null

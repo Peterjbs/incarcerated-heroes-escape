@@ -4,12 +4,13 @@ A dystopian web-based puzzle adventure game where you play as a band of incarcer
 
 ## 🌟 Game Overview
 
-**Incarcerated Heroes: Labyrinth Escape** is a browser-based puzzle game featuring 9 unique challenges that test your code-breaking, pattern recognition, logic, navigation skills, and reflexes. Each level presents a different type of puzzle that you must complete to unlock the next chamber and ultimately escape the labyrinth.
+**Incarcerated Heroes: Labyrinth Escape** is a browser-based puzzle game featuring 10 unique challenges that test your code-breaking, pattern recognition, logic, navigation skills, word-solving abilities, and reflexes. Each level presents a different type of puzzle that you must complete to unlock the next chamber and ultimately escape the labyrinth.
 
 ## 🎯 Features
 
-- **9 Unique Puzzle Levels**: Each with its own mechanics and challenge type
+- **10 Unique Puzzle Levels**: Each with its own mechanics and challenge type
 - **Progressive Difficulty**: Levels unlock sequentially as you complete each challenge
+- **Word Grid Puzzles**: New jigsaw-styled 5×5 crossword mini-game with drag-and-drop tiles
 - **Interactive Mazes**: Navigate through pathfinding challenges with moving enemies
 - **Gate Control Mechanics**: Strategic gate locking/unlocking in the final level
 - **Auto-Save Progress**: Your game progress is automatically saved in your browser
@@ -17,7 +18,7 @@ A dystopian web-based puzzle adventure game where you play as a band of incarcer
 - **Immersive Narrative**: Story elements guide you through your escape
 - **Victory Screen**: Celebrate your achievement upon completing all levels
 
-## 🕹️ The 9 Levels
+## 🕹️ The 10 Levels
 
 1. **Code Breaker** - Crack a 4-digit security code with limited attempts
 2. **Anagram Solver** - Rearrange scrambled letters into adjective-noun pairs
@@ -28,6 +29,7 @@ A dystopian web-based puzzle adventure game where you play as a band of incarcer
 7. **Pathfinder Challenge** - Navigate a maze while avoiding moving enemies
 8. **Pathfinder Extreme** - Advanced pathfinding with checkpoints and faster enemies
 9. **Gate Master Maze** - Control gates to guide comrades and trap enemies in the final escape
+10. **Word Grid Challenge** - Solve jigsaw-styled 5×5 crossword puzzles with themed word sets
 
 ## 🚀 How to Play
 
@@ -95,7 +97,8 @@ incarcerated-heroes-escape/
 │   ├── level6.js      # Map Navigation
 │   ├── level7.js      # Pathfinder Challenge
 │   ├── level8.js      # Pathfinder Extreme
-│   └── level9.js      # Gate Master Maze
+│   ├── level9.js      # Gate Master Maze
+│   └── level10.js     # Word Grid Challenge (NEW)
 └── README.md          # This file
 ```
 
@@ -149,6 +152,59 @@ This project is open source and available under the MIT License.
 - **Level 7**: Watch the enemy patrol patterns and time your movements carefully
 - **Level 8**: Collect checkpoints in any order, but plan an efficient route to minimize enemy encounters
 - **Level 9**: Use gates strategically to trap enemies and create safe paths for your comrades
+- **Level 10**: Each puzzle hides a message in six 5-letter words. Jigsaw-shaped tiles only fit in matching cells!
+
+## 🧩 Word Grid Challenge (Level 10)
+
+Level 10 introduces a unique word puzzle mini-game featuring jigsaw-styled letter tiles:
+
+### Game Mechanics
+- **5×5 Grid**: Complete crossword-style puzzles with 3 across and 3 down words
+- **Jigsaw Tiles**: Each tile has a unique shape with indents and flanges that only fit specific cells
+- **Multiple Puzzles**: Four thematic puzzles with varying difficulty
+- **Hidden Messages**: Each puzzle reveals a thematic phrase when completed
+
+### Controls
+- **Drag & Drop**: Click and drag tiles from the tray to the grid
+- **Click to Place**: Click a tile, then click a cell to place it
+- **Keyboard**: Use arrow keys to navigate and Enter to place selected tiles
+- **Touch Support**: Full touch/mobile support with tap-to-select
+
+### Puzzle Variants
+The game includes four themed puzzles with different prefill patterns:
+1. **Prison Break** - Corner letters prefilled (BLUE KEYS message)
+2. **Hero's Quest** - Center and corners prefilled (FAITH HEALS message)
+3. **Escape Route** - Edge midpoints prefilled (GO NORTH message)
+4. **Code Cipher** - Diagonal pattern prefilled (GATE PASS message)
+
+### Adding New Puzzles
+
+To create custom puzzles, edit the `WORD_GRID_PUZZLES` array in `levels/level10.js`:
+
+```javascript
+{
+    name: "Your Puzzle Name",
+    hint: "A helpful hint...",
+    words: {
+        across: ["WORD1", "WORD2", "WORD3"],  // 5 letters each
+        down: ["WORD4", "WORD5", "WORD6"]      // 5 letters each
+    },
+    acrossRows: [0, 2, 4],  // Which rows contain across words
+    downCols: [0, 2, 4],     // Which columns contain down words
+    prefilled: [
+        {row: 0, col: 0, letter: 'W'},  // Pre-placed letters
+        // Add more as needed
+    ],
+    message: "HIDDEN MESSAGE"  // Revealed on completion
+}
+```
+
+### Design Guidelines
+- **Word Selection**: Choose 5-letter words that intersect properly at rows 0,2,4 and columns 0,2,4
+- **Letter Constraints**: Vowels may repeat; try to use unique consonants per puzzle for difficulty
+- **Prefill Strategy**: More prefilled letters make puzzles easier; 4-5 is recommended
+- **Thematic Words**: Consider creating word sets that tell a story or encode hints for other levels
+- **Message Encoding**: The hidden message can provide clues, celebration text, or narrative elements
 
 ## 🐛 Known Issues
 
