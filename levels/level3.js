@@ -1,34 +1,50 @@
-// Level 3: Math Grid Puzzle - Drag numbers to complete equations
+// Level 3: 9-Number Grid - Magic Square Puzzle
 function initLevel3() {
     const container = document.getElementById('level-3');
+    
+    // Cleanup previous state if it exists
+    if (window.level3Data && window.level3Data.clickHandler) {
+        document.removeEventListener('click', window.level3Data.clickHandler);
+    }
     
     container.innerHTML = `
         <div class="level-container">
             <div class="level-header">
-                <h2>Level 3: Math Grid Puzzle</h2>
-                <p>Arrange numbers in the grid to make all equations correct</p>
+                <h2>Level 3: 9-Number Grid</h2>
+                <p>Arrange numbers 1-9 so each row, column, and diagonal sums to 15</p>
             </div>
             
             <div class="level-narrative">
-                A mystical grid of numbers blocks your path. Arrange the tiles so that 
-                each row and column forms a valid mathematical equation. 
-                The ancient mechanism will unlock only when all equations balance perfectly.
+                A mystical 3x3 grid blocks your path forward. Arrange the numbers 1 through 9 
+                so that every row, every column, and both diagonals sum to exactly 15. 
+                This ancient magic square is the key to unlocking the next chamber.
             </div>
             
             <div class="puzzle-container">
                 <div style="text-align: center;">
-                    <div id="math-grid" style="display: inline-block; margin: 30px auto;">
+                    <div style="margin-bottom: 30px;">
+                        <div style="font-size: 1.1rem; margin-bottom: 15px; color: #f39c12;">
+                            Target Sum: 15 (for each row, column, and diagonal)
+                        </div>
+                    </div>
+                    
+                    <div id="magic-grid" style="margin: 30px auto;">
                         <!-- Grid will be generated here -->
                     </div>
                     
                     <div id="available-numbers" style="margin: 30px 0;">
                         <h3 style="margin-bottom: 15px;">Available Numbers:</h3>
-                        <div id="number-pool" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                            <!-- Numbers will be generated here -->
+                        <div id="number-pool" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; max-width: 500px; margin: 0 auto;">
+                            <!-- Numbers 1-9 will be generated here -->
                         </div>
                     </div>
                     
-                    <div id="feedback3" style="min-height: 40px; margin: 20px 0; font-size: 1.1rem;"></div>
+                    <div id="feedback3" style="min-height: 60px; margin: 20px 0; font-size: 1.1rem;"></div>
+                    
+                    <div id="hint-section" style="margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; max-width: 500px; margin: 20px auto;">
+                        <button onclick="showHint3()" class="btn btn-secondary" style="margin-bottom: 10px;">Show Hint</button>
+                        <div id="hint-text" style="font-size: 0.9rem; opacity: 0.8; display: none;"></div>
+                    </div>
                 </div>
             </div>
             
@@ -46,175 +62,138 @@ function initLevel3() {
         const style = document.createElement('style');
         style.id = 'level3-styles';
         style.textContent = `
-        .math-grid-row {
-            display: flex;
-            gap: 5px;
-            margin: 5px 0;
+        .magic-grid-container {
+            display: inline-grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 8px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 3px solid var(--highlight-color);
         }
         
-        .math-cell {
-            width: 60px;
-            height: 60px;
+        .magic-cell {
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            border-radius: 5px;
-        }
-        
-        .math-cell.droppable {
+            border-radius: 8px;
             border: 2px dashed rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.05);
             cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        .math-cell.droppable.drag-over {
-            background: rgba(233, 69, 96, 0.2);
+        .magic-cell:hover {
+            background: rgba(233, 69, 96, 0.1);
             border-color: var(--highlight-color);
+            transform: scale(1.05);
         }
         
-        .math-cell.droppable.filled {
+        .magic-cell.filled {
             background: rgba(46, 204, 113, 0.2);
             border: 2px solid rgba(46, 204, 113, 0.5);
+            color: #2ecc71;
         }
         
-        .math-cell.operator {
-            background: transparent;
-            border: none;
-            color: var(--highlight-color);
+        .magic-cell.filled:hover {
+            background: rgba(46, 204, 113, 0.3);
         }
         
-        .number-tile {
+        .number-tile3 {
             width: 60px;
             height: 60px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            cursor: grab;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(233, 69, 96, 0.1));
+            border: 2px solid rgba(233, 69, 96, 0.5);
+            border-radius: 8px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            color: #fff;
         }
         
-        .number-tile:hover {
-            transform: scale(1.1);
-            background: rgba(233, 69, 96, 0.2);
+        .number-tile3:hover {
+            transform: scale(1.15);
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.4), rgba(233, 69, 96, 0.2));
             border-color: var(--highlight-color);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
         }
         
-        .number-tile.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-        }
-        
-        .number-tile.used {
+        .number-tile3.used {
             opacity: 0.3;
             cursor: not-allowed;
+            filter: grayscale(1);
+        }
+        
+        .number-tile3.used:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .number-tile3.selected {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(46, 204, 113, 0.2));
+            border-color: #2ecc71;
+            box-shadow: 0 0 25px rgba(46, 204, 113, 0.6);
         }
     `;
         document.head.appendChild(style);
     }
     
-    // Generate puzzle: 3x3 grid with simple equations
-    // Format: [num] [op] [num] = [result]
-    //         [op]
-    //         [num]
-    //         =
-    //         [result]
-    
-    const puzzle = generateMathPuzzle3();
-    
+    // Initialize game state
     window.level3Data = {
-        puzzle,
-        gridState: Array(9).fill(null)
+        gridState: Array(9).fill(null),
+        selectedNumber: null
     };
     
-    renderMathGrid3();
+    renderMagicGrid3();
+    renderNumberPool3();
 }
 
-function generateMathPuzzle3() {
-    // Simple puzzle: arrange numbers 1-9 in a 3x3 grid
-    // Row 1: a + b = c (where positions 0, 1, 2)
-    // Row 2: d - e = f (where positions 3, 4, 5)
-    // Row 3: g * h = i (where positions 6, 7, 8)
-    
-    // For simplicity, let's use a predefined solution
-    const solutions = [
-        { values: [1, 2, 3, 4, 1, 3, 2, 3, 6], ops: ['+', '-', '×'] },
-        { values: [2, 3, 5, 6, 2, 4, 1, 4, 4], ops: ['+', '-', '×'] },
-        { values: [1, 4, 5, 7, 3, 4, 2, 2, 4], ops: ['+', '-', '×'] }
-    ];
-    
-    const solution = solutions[Math.floor(Math.random() * solutions.length)];
-    const availableNumbers = [...solution.values].sort(() => Math.random() - 0.5);
-    
-    return {
-        solution: solution.values,
-        operators: solution.ops,
-        available: availableNumbers
-    };
-}
-
-function renderMathGrid3() {
+function renderMagicGrid3() {
     const data = window.level3Data;
     if (!data) return;
     
-    const gridDiv = document.getElementById('math-grid');
+    const gridDiv = document.getElementById('magic-grid');
     gridDiv.innerHTML = '';
+    gridDiv.className = 'magic-grid-container';
     
-    // Create 3x3 grid with operators
-    // Row format: [0] + [1] = [2]
-    //            [3] - [4] = [5]
-    //            [6] × [7] = [8]
-    
-    for (let row = 0; row < 3; row++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'math-grid-row';
+    // Create 3x3 grid
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'magic-cell';
+        cell.dataset.index = i;
         
-        for (let col = 0; col < 5; col++) {
-            const cell = document.createElement('div');
-            cell.className = 'math-cell';
-            
-            if (col === 1) {
-                // Operator
-                cell.classList.add('operator');
-                cell.textContent = data.puzzle.operators[row];
-            } else if (col === 3) {
-                // Equals sign
-                cell.classList.add('operator');
-                cell.textContent = '=';
-            } else {
-                // Number slot
-                const idx = row * 3 + (col > 3 ? 2 : col);
-                cell.classList.add('droppable');
-                cell.dataset.index = idx;
-                
-                if (data.gridState[idx] !== null) {
-                    cell.textContent = data.gridState[idx];
-                    cell.classList.add('filled');
-                }
-                
-                // Click to clear
-                cell.addEventListener('click', () => {
-                    if (data.gridState[idx] !== null) {
-                        data.gridState[idx] = null;
-                        renderMathGrid3();
-                        renderNumberPool3();
-                    }
-                });
-            }
-            
-            rowDiv.appendChild(cell);
+        if (data.gridState[i] !== null) {
+            cell.textContent = data.gridState[i];
+            cell.classList.add('filled');
         }
         
-        gridDiv.appendChild(rowDiv);
+        cell.addEventListener('click', () => {
+            if (data.selectedNumber !== null && data.gridState[i] === null) {
+                // Place number
+                data.gridState[i] = data.selectedNumber;
+                data.selectedNumber = null;
+                renderMagicGrid3();
+                renderNumberPool3();
+            } else if (data.gridState[i] !== null) {
+                // Remove number
+                data.gridState[i] = null;
+                renderMagicGrid3();
+                renderNumberPool3();
+            }
+        });
+        
+        gridDiv.appendChild(cell);
     }
-    
-    renderNumberPool3();
 }
 
 function renderNumberPool3() {
@@ -224,50 +203,29 @@ function renderNumberPool3() {
     const poolDiv = document.getElementById('number-pool');
     poolDiv.innerHTML = '';
     
-    const usedNumbers = data.gridState.filter(n => n !== null);
-    
-    data.puzzle.available.forEach((num, idx) => {
+    for (let num = 1; num <= 9; num++) {
         const tile = document.createElement('div');
-        tile.className = 'number-tile';
+        tile.className = 'number-tile3';
         tile.textContent = num;
-        tile.dataset.number = num;
         
-        const timesUsed = usedNumbers.filter(n => n === num).length;
-        const timesAvailable = data.puzzle.available.filter(n => n === num).length;
+        const isUsed = data.gridState.includes(num);
         
-        if (timesUsed >= timesAvailable) {
+        if (isUsed) {
             tile.classList.add('used');
         } else {
+            if (data.selectedNumber === num) {
+                tile.classList.add('selected');
+            }
+            
             tile.addEventListener('click', () => {
-                placeNumberInGrid3(num);
+                if (!isUsed) {
+                    data.selectedNumber = data.selectedNumber === num ? null : num;
+                    renderNumberPool3();
+                }
             });
         }
         
         poolDiv.appendChild(tile);
-    });
-}
-
-function placeNumberInGrid3(number) {
-    const data = window.level3Data;
-    if (!data) return;
-    
-    // Find first empty slot
-    const emptyIndex = data.gridState.findIndex(n => n === null);
-    if (emptyIndex !== -1) {
-        data.gridState[emptyIndex] = number;
-        renderMathGrid3();
-        renderNumberPool3();
-    }
-}
-
-function calculateResult3(a, b, operator) {
-    switch(operator) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '×': return a * b;
-        case '*': return a * b;
-        case '/': return a / b;
-        default: return 0;
     }
 }
 
@@ -278,28 +236,49 @@ function checkGrid3() {
     // Check if all slots filled
     if (data.gridState.some(n => n === null)) {
         document.getElementById('feedback3').innerHTML = 
-            '<span style="color: #f39c12;">Please fill all slots in the grid!</span>';
+            '<span style="color: #f39c12;">⚠ Please fill all 9 cells in the grid!</span>';
         return;
     }
     
-    // Check each equation
-    const row1Valid = calculateResult3(data.gridState[0], data.gridState[1], data.puzzle.operators[0]) === data.gridState[2];
-    const row2Valid = calculateResult3(data.gridState[3], data.gridState[4], data.puzzle.operators[1]) === data.gridState[5];
-    const row3Valid = calculateResult3(data.gridState[6], data.gridState[7], data.puzzle.operators[2]) === data.gridState[8];
+    // Check magic square: all rows, columns, and diagonals sum to 15
+    const grid = data.gridState;
+    const targetSum = 15;
     
-    if (row1Valid && row2Valid && row3Valid) {
+    // Check rows
+    const row1 = grid[0] + grid[1] + grid[2];
+    const row2 = grid[3] + grid[4] + grid[5];
+    const row3 = grid[6] + grid[7] + grid[8];
+    
+    // Check columns
+    const col1 = grid[0] + grid[3] + grid[6];
+    const col2 = grid[1] + grid[4] + grid[7];
+    const col3 = grid[2] + grid[5] + grid[8];
+    
+    // Check diagonals
+    const diag1 = grid[0] + grid[4] + grid[8];
+    const diag2 = grid[2] + grid[4] + grid[6];
+    
+    const allSums = [row1, row2, row3, col1, col2, col3, diag1, diag2];
+    const allCorrect = allSums.every(sum => sum === targetSum);
+    
+    if (allCorrect) {
         document.getElementById('feedback3').innerHTML = 
-            '<span style="color: #2ecc71; font-size: 1.5rem;">✓ Perfect! All equations are correct!</span>';
+            '<span style="color: #2ecc71; font-size: 1.5rem;">✓ Perfect! You\'ve solved the Magic Square!</span>';
         
         setTimeout(() => completeLevel(3), 1500);
     } else {
         const errors = [];
-        if (!row1Valid) errors.push('Row 1');
-        if (!row2Valid) errors.push('Row 2');
-        if (!row3Valid) errors.push('Row 3');
+        if (row1 !== targetSum) errors.push('Row 1');
+        if (row2 !== targetSum) errors.push('Row 2');
+        if (row3 !== targetSum) errors.push('Row 3');
+        if (col1 !== targetSum) errors.push('Column 1');
+        if (col2 !== targetSum) errors.push('Column 2');
+        if (col3 !== targetSum) errors.push('Column 3');
+        if (diag1 !== targetSum) errors.push('Main Diagonal');
+        if (diag2 !== targetSum) errors.push('Anti Diagonal');
         
         document.getElementById('feedback3').innerHTML = 
-            `<span style="color: #e74c3c;">Incorrect equations in: ${errors.join(', ')}. Try again!</span>`;
+            `<span style="color: #e74c3c;">✗ Incorrect sums in: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? '...' : ''}. Try again!</span>`;
     }
 }
 
@@ -308,7 +287,25 @@ function clearGrid3() {
     if (!data) return;
     
     data.gridState = Array(9).fill(null);
-    renderMathGrid3();
+    data.selectedNumber = null;
+    renderMagicGrid3();
     renderNumberPool3();
     document.getElementById('feedback3').innerHTML = '';
+    document.getElementById('hint-text').style.display = 'none';
+}
+
+function showHint3() {
+    const hintText = document.getElementById('hint-text');
+    if (hintText.style.display === 'none' || !hintText.style.display) {
+        hintText.style.display = 'block';
+        hintText.innerHTML = `
+            <strong>Hint:</strong> In a 3×3 magic square where each row, column, and diagonal sums to 15:
+            <br>• The center cell should contain 5
+            <br>• Corner cells contain even numbers (2, 4, 6, 8)
+            <br>• Edge cells (middle of sides) contain odd numbers (1, 3, 7, 9)
+            <br>• One valid solution: Place 2 in top-left, 9 in top-middle, 4 in top-right...
+        `;
+    } else {
+        hintText.style.display = 'none';
+    }
 }

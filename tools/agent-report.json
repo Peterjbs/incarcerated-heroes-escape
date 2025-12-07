@@ -1,0 +1,505 @@
+{
+  "timestamp": "2025-12-07T10:04:04.366Z",
+  "puzzles": [
+    {
+      "id": 1,
+      "title": "Puzzle 1 – Corners fixed",
+      "playability": {
+        "totalTiles": 21,
+        "prefilled": 4,
+        "prefillFraction": 0.19047619047619047,
+        "repeatedConsonants": [],
+        "uniqueLetters": 15,
+        "counts": {
+          "a": 5,
+          "l": 1,
+          "r": 1,
+          "m": 1,
+          "w": 1,
+          "d": 1,
+          "b": 1,
+          "c": 1,
+          "k": 1,
+          "i": 1,
+          "g": 1,
+          "e": 3,
+          "t": 1,
+          "n": 1,
+          "s": 1
+        },
+        "branchingEstimate": 21,
+        "score": 34.52
+      },
+      "variants": [
+        {
+          "name": "rotate90",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "rotate180",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "rotate270",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "transpose",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "mirrorLR",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "mirrorUD",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "prefill-corners",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "prefill-midpoints",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        },
+        {
+          "name": "prefill-plus",
+          "uniqueLetters": 21,
+          "playability": 34.52
+        }
+      ],
+      "secrets": [
+        {
+          "type": "first",
+          "value": "aataam",
+          "isWord": true
+        },
+        {
+          "type": "last",
+          "value": "mkstes",
+          "isWord": true
+        },
+        {
+          "type": "first_rev",
+          "value": "maataa",
+          "isWord": true
+        },
+        {
+          "type": "last_rev",
+          "value": "setskm",
+          "isWord": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Puzzle 2 – Corners + centre",
+      "playability": {
+        "totalTiles": 21,
+        "prefilled": 5,
+        "prefillFraction": 0.23809523809523808,
+        "repeatedConsonants": [],
+        "uniqueLetters": 16,
+        "counts": {
+          "f": 1,
+          "i": 4,
+          "s": 1,
+          "h": 1,
+          "y": 1,
+          "r": 1,
+          "t": 1,
+          "o": 1,
+          "a": 2,
+          "b": 1,
+          "c": 1,
+          "k": 1,
+          "e": 2,
+          "l": 1,
+          "n": 1,
+          "d": 1
+        },
+        "branchingEstimate": 21,
+        "score": 30.95
+      },
+      "variants": [
+        {
+          "name": "rotate90",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "rotate180",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "rotate270",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "transpose",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "mirrorLR",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "mirrorUD",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-corners",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-midpoints",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-plus",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        }
+      ],
+      "secrets": [
+        {
+          "type": "first",
+          "value": "falfsy",
+          "isWord": true
+        },
+        {
+          "type": "last",
+          "value": "ykdlnd",
+          "isWord": true
+        },
+        {
+          "type": "first_rev",
+          "value": "ysflaf",
+          "isWord": true
+        },
+        {
+          "type": "last_rev",
+          "value": "dnldky",
+          "isWord": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Puzzle 3 – Edge midpoints fixed",
+      "playability": {
+        "totalTiles": 21,
+        "prefilled": 4,
+        "prefillFraction": 0.19047619047619047,
+        "repeatedConsonants": [],
+        "uniqueLetters": 18,
+        "counts": {
+          "s": 1,
+          "w": 1,
+          "a": 3,
+          "m": 1,
+          "p": 1,
+          "l": 1,
+          "d": 1,
+          "o": 1,
+          "b": 1,
+          "c": 1,
+          "k": 1,
+          "n": 1,
+          "g": 1,
+          "e": 2,
+          "t": 1,
+          "h": 1,
+          "i": 1,
+          "r": 1
+        },
+        "branchingEstimate": 21,
+        "score": 27.38
+      },
+      "variants": [
+        {
+          "name": "rotate90",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "rotate180",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "rotate270",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "transpose",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "mirrorLR",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "mirrorUD",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "prefill-corners",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "prefill-midpoints",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        },
+        {
+          "name": "prefill-plus",
+          "uniqueLetters": 21,
+          "playability": 27.38
+        }
+      ],
+      "secrets": [
+        {
+          "type": "first",
+          "value": "satsap",
+          "isWord": true
+        },
+        {
+          "type": "last",
+          "value": "pkrter",
+          "isWord": true
+        },
+        {
+          "type": "first_rev",
+          "value": "pastas",
+          "isWord": true
+        },
+        {
+          "type": "last_rev",
+          "value": "retrkp",
+          "isWord": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Puzzle 4 – Midpoints + centre",
+      "playability": {
+        "totalTiles": 21,
+        "prefilled": 5,
+        "prefillFraction": 0.23809523809523808,
+        "repeatedConsonants": [],
+        "uniqueLetters": 15,
+        "counts": {
+          "p": 1,
+          "o": 1,
+          "s": 1,
+          "e": 3,
+          "r": 1,
+          "l": 1,
+          "t": 1,
+          "a": 5,
+          "b": 1,
+          "c": 1,
+          "k": 1,
+          "z": 1,
+          "g": 1,
+          "h": 1,
+          "d": 1
+        },
+        "branchingEstimate": 21,
+        "score": 33.33
+      },
+      "variants": [
+        {
+          "name": "rotate90",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "rotate180",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "rotate270",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "transpose",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "mirrorLR",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "mirrorUD",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "prefill-corners",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "prefill-midpoints",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        },
+        {
+          "name": "prefill-plus",
+          "uniqueLetters": 21,
+          "playability": 33.33
+        }
+      ],
+      "secrets": [
+        {
+          "type": "first",
+          "value": "paapsr",
+          "isWord": true
+        },
+        {
+          "type": "last",
+          "value": "rkdaed",
+          "isWord": true
+        },
+        {
+          "type": "first_rev",
+          "value": "rspaap",
+          "isWord": true
+        },
+        {
+          "type": "last_rev",
+          "value": "deadkr",
+          "isWord": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Puzzle 5 – Centre plus shape",
+      "playability": {
+        "totalTiles": 21,
+        "prefilled": 5,
+        "prefillFraction": 0.23809523809523808,
+        "repeatedConsonants": [],
+        "uniqueLetters": 16,
+        "counts": {
+          "p": 1,
+          "o": 1,
+          "s": 1,
+          "e": 3,
+          "r": 1,
+          "l": 1,
+          "t": 1,
+          "a": 4,
+          "b": 1,
+          "c": 1,
+          "k": 1,
+          "z": 1,
+          "g": 1,
+          "m": 1,
+          "n": 1,
+          "d": 1
+        },
+        "branchingEstimate": 21,
+        "score": 30.95
+      },
+      "variants": [
+        {
+          "name": "rotate90",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "rotate180",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "rotate270",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "transpose",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "mirrorLR",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "mirrorUD",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-corners",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-midpoints",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        },
+        {
+          "name": "prefill-plus",
+          "uniqueLetters": 21,
+          "playability": 30.95
+        }
+      ],
+      "secrets": [
+        {
+          "type": "first",
+          "value": "paapsr",
+          "isWord": true
+        },
+        {
+          "type": "last",
+          "value": "rkdaed",
+          "isWord": true
+        },
+        {
+          "type": "first_rev",
+          "value": "rspaap",
+          "isWord": true
+        },
+        {
+          "type": "last_rev",
+          "value": "deadkr",
+          "isWord": true
+        }
+      ]
+    }
+  ]
+}

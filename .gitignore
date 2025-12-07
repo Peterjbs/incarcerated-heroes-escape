@@ -1,0 +1,30 @@
+# Development files
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+/tmp/
+*.tmp
+
+# Editor directories
+.vscode/
+.idea/
+*.sublime-*
+
+# Backup files
+*_old.*
+*.bak
+*.backup
+
+# Node modules (if ever added)
+node_modules/
+
+# Build artifacts (if ever added)
+dist/
+build/
+
+# Screenshots (temporary testing artifacts)
+screenshots/
