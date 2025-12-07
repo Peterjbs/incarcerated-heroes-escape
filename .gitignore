@@ -25,3 +25,6 @@ node_modules/
 # Build artifacts (if ever added)
 dist/
 build/
+
+# Screenshots (temporary testing artifacts)
+screenshots/

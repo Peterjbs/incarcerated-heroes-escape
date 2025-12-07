@@ -557,7 +557,10 @@
             ctx.clip();
             
             // Wood gradient background (deterministic based on tile position)
-            const woodIndex = (tile.targetRow * 5 + tile.targetCol) % WOOD_COLORS.length;
+            // Handle both prefilled tiles (row/col) and tray tiles (targetRow/targetCol)
+            const tileRow = tile.targetRow ?? tile.row;
+            const tileCol = tile.targetCol ?? tile.col;
+            const woodIndex = (tileRow * 5 + tileCol) % WOOD_COLORS.length;
             const woodSet = WOOD_COLORS[woodIndex];
             const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
             gradient.addColorStop(0, woodSet[0]);
@@ -570,7 +573,7 @@
             // Add wood grain texture (deterministic based on position)
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.lineWidth = 1;
-            const grainSeed = (tile.targetRow * 7 + tile.targetCol * 11) % 100 / 100;
+            const grainSeed = (tileRow * 7 + tileCol * 11) % 100 / 100;
             for (let i = 0; i < 5; i++) {
                 const yPos = y + (i + 1) * size / 6;
                 ctx.beginPath();
