@@ -77,6 +77,13 @@ const GameState = {
             description: "Hack the security system and guide your comrade",
             completed: false,
             unlocked: false
+        },
+        {
+            id: 9,
+            title: "Vital Signs Subterfuge",
+            description: "Extract trackers and deceive surveillance",
+            completed: false,
+            unlocked: false
         }
     ],
     currentLevel: null

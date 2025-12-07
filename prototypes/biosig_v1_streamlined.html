@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Signature Mimicry - V1 Streamlined</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .phase {
+            display: none;
+        }
+        
+        .phase.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .vital-group {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .vital-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .target-value {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .slider-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(233, 69, 96, 0.5);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(233, 69, 96, 0.5);
+        }
+        
+        .proximity-indicator {
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .proximity-indicator.perfect {
+            background: rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+        
+        .proximity-indicator.close {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+        }
+        
+        .proximity-indicator.far {
+            background: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+        }
+        
+        .tap-zone {
+            width: 280px;
+            height: 280px;
+            margin: 30px auto;
+            border: 4px solid #e94560;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.2), transparent);
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+        
+        .tap-zone:active {
+            transform: scale(0.95);
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.4), transparent);
+        }
+        
+        .tap-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .metronome {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #e94560;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+        
+        .metronome.pulse {
+            opacity: 1;
+            animation: pulse 0.3s ease;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stat {
+            flex: 1;
+        }
+        
+        .stat-label {
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #d62f4e);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .result {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-score {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bio-Signature Mimicry</h1>
+        <p class="subtitle">Version 1: Streamlined Challenge</p>
+        
+        <!-- Phase 1: Quick Scan -->
+        <div id="phase-scan" class="phase active">
+            <div class="info-box">
+                <strong>Quick Scan:</strong> Hold your cursor steady on the target for 3 seconds to scan the bio-signature.
+            </div>
+            
+            <canvas id="scan-canvas" width="500" height="300" style="width: 100%; border-radius: 12px; background: rgba(0,0,0,0.3); cursor: crosshair;"></canvas>
+            
+            <div class="progress-bar">
+                <div id="scan-progress" class="progress-fill" style="width: 0%;"></div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 10px; opacity: 0.8;">
+                <span id="scan-status">Move cursor to the pulsing target...</span>
+            </p>
+        </div>
+        
+        <!-- Phase 2: Vitals Configuration -->
+        <div id="phase-vitals" class="phase">
+            <div class="info-box">
+                <strong>Vitals Configuration:</strong> Match the target's biological parameters using the sliders below.
+            </div>
+            
+            <div class="vital-group">
+                <div class="vital-label">
+                    <span>❤️ Heart Rate</span>
+                    <span class="target-value">Target: <span id="target-hr">72±5</span> BPM</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="hr-slider" min="40" max="120" value="70">
+                    <div style="text-align: center; margin-top: 5px;">
+                        Current: <strong id="current-hr">70</strong> BPM
+                    </div>
+                    <div id="hr-proximity" class="proximity-indicator far">Too far</div>
+                </div>
+            </div>
+            
+            <div class="vital-group">
+                <div class="vital-label">
+                    <span>💨 Blood Oxygen</span>
+                    <span class="target-value">Target: <span id="target-o2">98±2</span>%</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="o2-slider" min="80" max="100" value="95">
+                    <div style="text-align: center; margin-top: 5px;">
+                        Current: <strong id="current-o2">95</strong>%
+                    </div>
+                    <div id="o2-proximity" class="proximity-indicator far">Too far</div>
+                </div>
+            </div>
+            
+            <div class="vital-group">
+                <div class="vital-label">
+                    <span>🌡️ Temperature</span>
+                    <span class="target-value">Target: <span id="target-temp">36.8±0.3</span>°C</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="temp-slider" min="35.0" max="39.0" step="0.1" value="37.0">
+                    <div style="text-align: center; margin-top: 5px;">
+                        Current: <strong id="current-temp">37.0</strong>°C
+                    </div>
+                    <div id="temp-proximity" class="proximity-indicator far">Too far</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="proceedToRhythm()">Proceed to Rhythm Matching →</button>
+        </div>
+        
+        <!-- Phase 3: Rhythm Matching -->
+        <div id="phase-rhythm" class="phase">
+            <div class="info-box">
+                <strong>Rhythm Matching:</strong> Tap in sync with the metronome for <span id="rhythm-duration">10</span> seconds.
+                Target: <strong><span id="target-bpm">72</span> BPM</strong>
+            </div>
+            
+            <div class="tap-zone" id="tap-zone" onclick="handleTap()">
+                <div class="tap-text">TAP HERE</div>
+                <div class="metronome" id="metronome"></div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Your BPM</div>
+                    <div class="stat-value" id="current-bpm">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Taps</div>
+                    <div class="stat-value" id="tap-count">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Time</div>
+                    <div class="stat-value"><span id="time-left">10</span>s</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div id="rhythm-progress" class="progress-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+        <!-- Phase 4: Result -->
+        <div id="phase-result" class="phase">
+            <div class="result">
+                <div class="result-icon" id="result-icon">✓</div>
+                <div class="result-message" id="result-message">Success!</div>
+                <div class="result-score" id="result-score">Score: 85/100</div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="restart()">Try Again</button>
+            <button class="btn btn-secondary" onclick="window.location.href='../'">Back to Game</button>
+        </div>
+    </div>
+    
+    <script>
+        // Game state
+        let gameData = {
+            targetHR: 72,
+            targetHRVar: 5,
+            targetO2: 98,
+            targetO2Var: 2,
+            targetTemp: 36.8,
+            targetTempVar: 0.3,
+            targetBPM: 72,
+            currentHR: 70,
+            currentO2: 95,
+            currentTemp: 37.0,
+            scanProgress: 0,
+            taps: [],
+            rhythmDuration: 10
+        };
+        
+        // Phase 1: Scanning
+        function initScan() {
+            const canvas = document.getElementById('scan-canvas');
+            const ctx = canvas.getContext('2d');
+            const status = document.getElementById('scan-status');
+            const progressBar = document.getElementById('scan-progress');
+            
+            let targetX = 250 + Math.random() * 100 - 50;
+            let targetY = 150 + Math.random() * 60 - 30;
+            let cursorX = 0;
+            let cursorY = 0;
+            let scanning = false;
+            let scanStart = 0;
+            const scanDuration = 3000; // 3 seconds
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < canvas.width; i += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < canvas.height; i += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(canvas.width, i);
+                    ctx.stroke();
+                }
+                
+                // Draw pulsing target
+                const pulse = Math.sin(Date.now() / 200) * 0.2 + 1;
+                ctx.beginPath();
+                ctx.arc(targetX, targetY, 25 * pulse, 0, Math.PI * 2);
+                ctx.strokeStyle = '#2ecc71';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(targetX, targetY, 15, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+                ctx.fill();
+                
+                // Draw cursor
+                if (cursorX && cursorY) {
+                    ctx.beginPath();
+                    ctx.arc(cursorX, cursorY, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = '#e94560';
+                    ctx.fill();
+                }
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                cursorX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                cursorY = (e.clientY - rect.top) * (canvas.height / rect.height);
+                
+                const distance = Math.sqrt(
+                    Math.pow(cursorX - targetX, 2) + Math.pow(cursorY - targetY, 2)
+                );
+                
+                if (distance < 40) {
+                    if (!scanning) {
+                        scanning = true;
+                        scanStart = Date.now();
+                        status.textContent = '✓ Locked on! Hold steady...';
+                        status.style.color = '#2ecc71';
+                    }
+                    
+                    const elapsed = Date.now() - scanStart;
+                    const progress = Math.min(100, (elapsed / scanDuration) * 100);
+                    gameData.scanProgress = progress;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        status.textContent = '✓ Scan Complete!';
+                        setTimeout(() => {
+                            showPhase('phase-vitals');
+                        }, 500);
+                    }
+                } else {
+                    if (scanning) {
+                        scanning = false;
+                        status.textContent = '⚠️ Target lost! Reacquire position...';
+                        status.style.color = '#f39c12';
+                    }
+                    gameData.scanProgress = Math.max(0, gameData.scanProgress - 2);
+                    progressBar.style.width = gameData.scanProgress + '%';
+                }
+            });
+        }
+        
+        // Phase 2: Vitals Configuration
+        function initVitals() {
+            const hrSlider = document.getElementById('hr-slider');
+            const o2Slider = document.getElementById('o2-slider');
+            const tempSlider = document.getElementById('temp-slider');
+            
+            function updateProximity(value, target, variance, elementId, displayId) {
+                const diff = Math.abs(value - target);
+                const indicator = document.getElementById(elementId);
+                const display = document.getElementById(displayId);
+                
+                display.textContent = value;
+                
+                if (diff <= variance) {
+                    indicator.textContent = '✓ Perfect Match!';
+                    indicator.className = 'proximity-indicator perfect';
+                } else if (diff <= variance * 2) {
+                    indicator.textContent = '↗️ Close - Keep Adjusting';
+                    indicator.className = 'proximity-indicator close';
+                } else {
+                    indicator.textContent = '❌ Too Far';
+                    indicator.className = 'proximity-indicator far';
+                }
+            }
+            
+            hrSlider.addEventListener('input', (e) => {
+                gameData.currentHR = parseInt(e.target.value);
+                updateProximity(gameData.currentHR, gameData.targetHR, gameData.targetHRVar, 'hr-proximity', 'current-hr');
+            });
+            
+            o2Slider.addEventListener('input', (e) => {
+                gameData.currentO2 = parseInt(e.target.value);
+                updateProximity(gameData.currentO2, gameData.targetO2, gameData.targetO2Var, 'o2-proximity', 'current-o2');
+            });
+            
+            tempSlider.addEventListener('input', (e) => {
+                gameData.currentTemp = parseFloat(e.target.value);
+                updateProximity(gameData.currentTemp, gameData.targetTemp, gameData.targetTempVar, 'temp-proximity', 'current-temp');
+            });
+            
+            // Initial update
+            updateProximity(gameData.currentHR, gameData.targetHR, gameData.targetHRVar, 'hr-proximity', 'current-hr');
+            updateProximity(gameData.currentO2, gameData.targetO2, gameData.targetO2Var, 'o2-proximity', 'current-o2');
+            updateProximity(gameData.currentTemp, gameData.targetTemp, gameData.targetTempVar, 'temp-proximity', 'current-temp');
+        }
+        
+        // Phase 3: Rhythm Matching
+        function initRhythm() {
+            gameData.taps = [];
+            const metronome = document.getElementById('metronome');
+            const tapCount = document.getElementById('tap-count');
+            const currentBPM = document.getElementById('current-bpm');
+            const timeLeft = document.getElementById('time-left');
+            const rhythmProgress = document.getElementById('rhythm-progress');
+            
+            const interval = 60000 / gameData.targetBPM;
+            let timeRemaining = gameData.rhythmDuration;
+            
+            // Metronome
+            setInterval(() => {
+                metronome.classList.add('pulse');
+                setTimeout(() => metronome.classList.remove('pulse'), 300);
+            }, interval);
+            
+            // Timer
+            const timer = setInterval(() => {
+                timeRemaining--;
+                timeLeft.textContent = timeRemaining;
+                rhythmProgress.style.width = ((gameData.rhythmDuration - timeRemaining) / gameData.rhythmDuration * 100) + '%';
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    showResult();
+                }
+            }, 1000);
+            
+            // Update BPM display
+            window.updateBPM = () => {
+                tapCount.textContent = gameData.taps.length;
+                
+                if (gameData.taps.length >= 2) {
+                    const intervals = [];
+                    for (let i = 1; i < gameData.taps.length; i++) {
+                        intervals.push(gameData.taps[i] - gameData.taps[i-1]);
+                    }
+                    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                    const bpm = Math.round(60000 / avgInterval);
+                    currentBPM.textContent = bpm;
+                }
+            };
+        }
+        
+        function handleTap() {
+            gameData.taps.push(Date.now());
+            window.updateBPM();
+        }
+        
+        // Calculate score and show result
+        function showResult() {
+            let score = 0;
+            
+            // Vitals score (60 points)
+            const hrDiff = Math.abs(gameData.currentHR - gameData.targetHR);
+            const o2Diff = Math.abs(gameData.currentO2 - gameData.targetO2);
+            const tempDiff = Math.abs(gameData.currentTemp - gameData.targetTemp);
+            
+            if (hrDiff <= gameData.targetHRVar) score += 20;
+            else if (hrDiff <= gameData.targetHRVar * 2) score += 10;
+            
+            if (o2Diff <= gameData.targetO2Var) score += 20;
+            else if (o2Diff <= gameData.targetO2Var * 2) score += 10;
+            
+            if (tempDiff <= gameData.targetTempVar) score += 20;
+            else if (tempDiff <= gameData.targetTempVar * 2) score += 10;
+            
+            // Rhythm score (40 points)
+            if (gameData.taps.length >= 3) {
+                const intervals = [];
+                for (let i = 1; i < gameData.taps.length; i++) {
+                    intervals.push(gameData.taps[i] - gameData.taps[i-1]);
+                }
+                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                const achievedBPM = 60000 / avgInterval;
+                const bpmDiff = Math.abs(achievedBPM - gameData.targetBPM);
+                const rhythmAccuracy = Math.max(0, 100 - (bpmDiff * 5));
+                score += (rhythmAccuracy / 100) * 40;
+            }
+            
+            const resultIcon = document.getElementById('result-icon');
+            const resultMessage = document.getElementById('result-message');
+            const resultScore = document.getElementById('result-score');
+            
+            if (score >= 75) {
+                resultIcon.textContent = '✓';
+                resultIcon.style.color = '#2ecc71';
+                resultMessage.textContent = 'Success! Bio-signature validated.';
+                resultMessage.style.color = '#2ecc71';
+            } else if (score >= 50) {
+                resultIcon.textContent = '⚠️';
+                resultIcon.style.color = '#f39c12';
+                resultMessage.textContent = 'Partial Match - Refinement needed.';
+                resultMessage.style.color = '#f39c12';
+            } else {
+                resultIcon.textContent = '✗';
+                resultIcon.style.color = '#e74c3c';
+                resultMessage.textContent = 'Failed - Try again.';
+                resultMessage.style.color = '#e74c3c';
+            }
+            
+            resultScore.textContent = `Score: ${Math.round(score)}/100`;
+            showPhase('phase-result');
+        }
+        
+        function proceedToRhythm() {
+            showPhase('phase-rhythm');
+            initRhythm();
+        }
+        
+        function showPhase(phaseId) {
+            document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+            document.getElementById(phaseId).classList.add('active');
+        }
+        
+        function restart() {
+            gameData = {
+                targetHR: 72,
+                targetHRVar: 5,
+                targetO2: 98,
+                targetO2Var: 2,
+                targetTemp: 36.8,
+                targetTempVar: 0.3,
+                targetBPM: 72,
+                currentHR: 70,
+                currentO2: 95,
+                currentTemp: 37.0,
+                scanProgress: 0,
+                taps: [],
+                rhythmDuration: 10
+            };
+            showPhase('phase-scan');
+            initScan();
+        }
+        
+        // Initialize
+        initScan();
+        initVitals();
+    </script>
+</body>
+</html>
