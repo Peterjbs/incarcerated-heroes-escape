@@ -1,0 +1,15 @@
+{
+  "name": "incarcerated-heroes-escape",
+  "version": "1.0.0",
+  "description": "A dystopian web-based puzzle adventure game where you play as a band of incarcerated heroes trapped in a labyrinth. Solve code-breaking and puzzle challenges to navigate through eight levels, avoid foes, and escape back to Earth to build a new home.",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "minimist": "^1.2.8"
+  }
+}
