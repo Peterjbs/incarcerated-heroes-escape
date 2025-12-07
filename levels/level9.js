@@ -7,9 +7,6 @@ function initLevel9() {
         if (window.level9Data.cycleInterval) clearInterval(window.level9Data.cycleInterval);
         if (window.level9Data.heartbeatInterval) clearInterval(window.level9Data.heartbeatInterval);
         if (window.level9Data.extractionInterval) clearInterval(window.level9Data.extractionInterval);
-        document.removeEventListener('keydown', handleHeartbeatTap9);
-        document.removeEventListener('mousedown', handleHeartbeatTap9);
-        document.removeEventListener('touchstart', handleHeartbeatTap9);
     }
     
     container.innerHTML = `
@@ -24,9 +21,9 @@ function initLevel9() {
                 You've commandeered a maintenance MedBot with extraction capabilities. 
                 During each 60-second monitoring cycle, you must: extract a tracker using precision 
                 controls, analyze the ally's unique bio-signature, then program a counterfeit signal 
-                using rhythm-matching and parameter tuning. The system validates every 90 seconds—a 
-                green reading means success, orange requires refinement. Three orange failures trigger 
-                a red alert. Each ally presents unique challenges based on their physical condition.
+                using rhythm-matching and parameter tuning. The system validates after each stopped 
+                cycle—a green reading means success, orange requires refinement. Three orange 
+                failures trigger a red alert. Each ally presents unique challenges based on their physical condition.
             </div>
             
             <div id="game-screen-9" class="puzzle-container">
@@ -943,6 +940,15 @@ function startRhythmMatching9(duration) {
     tapZone.addEventListener('click', handleTap);
     tapZone.addEventListener('touchstart', handleTap);
     
+    // Add keyboard support (space bar)
+    const handleKeyboard = (e) => {
+        if (e.code === 'Space' || e.key === ' ') {
+            e.preventDefault();
+            handleTap(e);
+        }
+    };
+    document.addEventListener('keydown', handleKeyboard);
+    
     // Timer
     const timer = setInterval(() => {
         timeLeft--;
@@ -950,6 +956,7 @@ function startRhythmMatching9(duration) {
         
         if (timeLeft <= 0) {
             clearInterval(timer);
+            document.removeEventListener('keydown', handleKeyboard);
             completeRhythmMatching9();
         }
     }, 1000);
@@ -1138,17 +1145,3 @@ function selectAlly9(allyId) {
     data.currentAlly = ally;
     renderScreen9('extraction');
 }
-
-// Event handler for rhythm tapping
-function handleHeartbeatTap9(e) {
-    if (e.type === 'keydown' && e.code === 'Space') {
-        e.preventDefault();
-        const tapZone = document.getElementById('tap-zone-9');
-        if (tapZone) {
-            tapZone.click();
-        }
-    }
-}
-
-// Add keyboard support for rhythm matching
-document.addEventListener('keydown', handleHeartbeatTap9);
