@@ -264,13 +264,14 @@
             const loading = document.getElementById('loading');
             
             loading.style.display = 'block';
-            iframe.src = currentGame.html;
             
-            // Hide loading after a short delay
-            setTimeout(() => {
+            // Use iframe onload event for accurate loading state
+            iframe.onload = function() {
                 loading.style.display = 'none';
                 document.getElementById('reload-btn').disabled = false;
-            }, 1000);
+            };
+            
+            iframe.src = currentGame.html;
         }
         
         // Open game in new tab

@@ -59,14 +59,12 @@ initLevel2()
 
 ### Adapter Pattern (if needed)
 
-The HTML wrapper provides standard entry points:
+The HTML wrapper automatically detects the correct entry point. If needed, you can create an adapter:
 
 ```javascript
-// Standard adapter in HTML wrapper
-window.initAnagramSolver2Word = function() {
-    // Calls the actual game function
-    initAnagramSolver2Word();
-};
+// Example: if game exposes a different function name
+// Map it to the expected pattern
+window.initAnagramSolver2Word = window.someOtherGameInitFunction;
 ```
 
 ## Known Issues
@@ -104,11 +102,13 @@ window.initAnagramSolver2Word = function() {
 
 ## Tweaks and Configuration
 
-Current implementation uses hardcoded word pairs:
+Current implementation uses hardcoded word pairs (as of 2025-12-08):
 - DARK FOREST
 - HIDDEN DOOR
 - SECRET PATH
 - ANCIENT LOCK
+
+**Note:** These are the current word pairs in the game. Check the source code in `initAnagramSolver2Word()` for the most up-to-date list.
 
 To modify word pairs, edit the `wordPairs` array in `initAnagramSolver2Word()` function.
 

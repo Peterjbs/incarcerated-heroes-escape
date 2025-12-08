@@ -61,14 +61,12 @@ initLevel4()
 
 ### Adapter Pattern (if needed)
 
-The HTML wrapper provides standard entry points:
+The HTML wrapper automatically detects the correct entry point. If needed, you can create an adapter:
 
 ```javascript
-// Standard adapter in HTML wrapper
-window.initCodeBreaker6DigitTimed = function() {
-    // Calls the actual game function
-    initCodeBreaker6DigitTimed();
-};
+// Example: if game exposes a different function name
+// Map it to the expected pattern
+window.initCodeBreaker6DigitTimed = window.someOtherGameInitFunction;
 ```
 
 ## Known Issues
