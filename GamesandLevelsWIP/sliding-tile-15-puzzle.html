@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Tile 15-Puzzle - Test Wrapper</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        
+        .wrapper-controls {
+            max-width: 800px;
+            margin: 0 auto 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .wrapper-controls h1 {
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .wrapper-controls .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .wrapper-controls button {
+            padding: 10px 20px;
+            background: var(--highlight-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .wrapper-controls button:hover {
+            background: #ff6b81;
+            transform: translateY(-2px);
+        }
+        
+        .wrapper-info {
+            max-width: 800px;
+            margin: 0 auto 20px;
+            padding: 10px;
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid var(--warning-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        #game-root {
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper-controls">
+        <h1>🎮 Sliding Tile 15-Puzzle</h1>
+        <p style="margin-bottom: 15px;">Test Wrapper - Standalone Mode</p>
+        <div class="btn-group">
+            <button onclick="startNewGame()">New Game</button>
+            <button onclick="shuffleGame()">Shuffle</button>
+            <button onclick="location.reload()">Reload Page</button>
+        </div>
+    </div>
+    
+    <div class="wrapper-info" id="wrapper-info">
+        ⚠️ <strong>Note:</strong> <span id="info-message"></span>
+    </div>
+    
+    <div id="game-root">
+        <!-- Game will be initialized here -->
+        <div id="level-5"></div>
+    </div>
+    
+    <script src="sliding-tile-15-puzzle.js"></script>
+    <script>
+        // Adapter to support multiple entrypoint patterns
+        let gameInitialized = false;
+        let initFunction = null;
+        
+        function detectInitFunction() {
+            // Try different entrypoint patterns in order of preference
+            if (typeof window.initSlidingTile15Puzzle === 'function') {
+                initFunction = window.initSlidingTile15Puzzle;
+                return 'initSlidingTile15Puzzle';
+            } else if (typeof window.setupSlidingTile15Puzzle === 'function') {
+                initFunction = window.setupSlidingTile15Puzzle;
+                return 'setupSlidingTile15Puzzle';
+            } else if (typeof window.init === 'function') {
+                initFunction = window.init;
+                return 'init';
+            }
+            return null;
+        }
+        
+        function showInfo(message) {
+            document.getElementById('info-message').textContent = message;
+            document.getElementById('wrapper-info').style.display = 'block';
+        }
+        
+        function startNewGame() {
+            if (initFunction) {
+                try {
+                    initFunction();
+                    gameInitialized = true;
+                } catch (error) {
+                    console.error('Error starting game:', error);
+                    showInfo('Error starting game: ' + error.message);
+                }
+            } else {
+                showInfo('No valid initialization function found. Please check the per-game README for the correct entrypoint.');
+            }
+        }
+        
+        function shuffleGame() {
+            // Try to shuffle or reinitialize
+            if (typeof window.shuffleTiles5 === 'function') {
+                window.shuffleTiles5();
+            } else {
+                startNewGame();
+            }
+        }
+        
+        // Auto-initialize on load
+        window.addEventListener('DOMContentLoaded', function() {
+            const detectedFunc = detectInitFunction();
+            if (detectedFunc) {
+                console.log('Detected init function:', detectedFunc);
+                startNewGame();
+            } else {
+                showInfo('Could not find a compatible init function. Expected: initSlidingTile15Puzzle, setupSlidingTile15Puzzle, or init. Please refer to sliding-tile-15-puzzle.README.md for integration details.');
+            }
+        });
+    </script>
+</body>
+</html>
