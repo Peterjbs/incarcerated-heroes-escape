@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Test Runner - Incarcerated Heroes Escape</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .test-runner-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .controls label {
+            font-weight: bold;
+            color: var(--text-light);
+        }
+        
+        .controls select {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 2px solid var(--highlight-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        .controls select option {
+            background: var(--secondary-color);
+            color: var(--text-light);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: var(--highlight-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .btn:hover {
+            background: #ff6b81;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--accent-color);
+        }
+        
+        .btn-secondary:hover {
+            background: #1e5a8e;
+        }
+        
+        .game-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+        
+        .game-info h3 {
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+        }
+        
+        .game-info .meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .game-info .meta span {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 3px solid var(--highlight-color);
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        
+        .error-message {
+            display: none;
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid #e74c3c;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-runner-container">
+        <div class="header">
+            <h1>🎮 Game Test Runner</h1>
+            <p>Quick testing interface for all minigames in GamesandLevelsWIP</p>
+        </div>
+        
+        <div class="error-message" id="error-message"></div>
+        
+        <div class="controls">
+            <label for="game-select">Select Game:</label>
+            <select id="game-select">
+                <option value="">-- Choose a game to test --</option>
+            </select>
+            <button class="btn" id="load-btn" disabled>Load Game</button>
+            <button class="btn btn-secondary" id="new-tab-btn" disabled>Open in New Tab</button>
+            <button class="btn btn-secondary" id="reload-btn" disabled>Reload</button>
+        </div>
+        
+        <div class="game-info" id="game-info" style="display: none;">
+            <h3 id="game-title"></h3>
+            <div class="meta">
+                <span>📁 <strong>File:</strong> <span id="game-file"></span></span>
+                <span>⚡ <strong>Difficulty:</strong> <span id="game-difficulty"></span></span>
+                <span>🏷️ <strong>Tags:</strong> <span id="game-tags"></span></span>
+            </div>
+        </div>
+        
+        <div class="iframe-container">
+            <div class="loading" id="loading">Loading game...</div>
+            <iframe id="game-frame" src="about:blank"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        let manifestData = null;
+        let currentGame = null;
+        
+        // Load manifest on page load
+        async function loadManifest() {
+            try {
+                const response = await fetch('manifest-levels.json');
+                if (!response.ok) {
+                    throw new Error(`Failed to load manifest: ${response.status}`);
+                }
+                manifestData = await response.json();
+                populateGameSelect();
+            } catch (error) {
+                showError('Failed to load game manifest: ' + error.message);
+                console.error('Manifest load error:', error);
+            }
+        }
+        
+        // Populate the game select dropdown
+        function populateGameSelect() {
+            const select = document.getElementById('game-select');
+            manifestData.games.forEach(game => {
+                const option = document.createElement('option');
+                option.value = game.id;
+                option.textContent = game.title;
+                select.appendChild(option);
+            });
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Hide error message
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        // Handle game selection
+        document.getElementById('game-select').addEventListener('change', function() {
+            const gameId = this.value;
+            if (gameId) {
+                currentGame = manifestData.games.find(g => g.id === gameId);
+                document.getElementById('load-btn').disabled = false;
+                document.getElementById('new-tab-btn').disabled = false;
+                updateGameInfo();
+            } else {
+                currentGame = null;
+                document.getElementById('load-btn').disabled = true;
+                document.getElementById('new-tab-btn').disabled = true;
+                document.getElementById('reload-btn').disabled = true;
+                document.getElementById('game-info').style.display = 'none';
+            }
+        });
+        
+        // Update game info display
+        function updateGameInfo() {
+            if (!currentGame) return;
+            
+            document.getElementById('game-title').textContent = currentGame.title;
+            document.getElementById('game-file').textContent = currentGame.html;
+            document.getElementById('game-difficulty').textContent = currentGame.difficulty;
+            document.getElementById('game-tags').textContent = currentGame.tags.join(', ');
+            document.getElementById('game-info').style.display = 'block';
+        }
+        
+        // Load game in iframe
+        function loadGame() {
+            if (!currentGame) return;
+            
+            hideError();
+            const iframe = document.getElementById('game-frame');
+            const loading = document.getElementById('loading');
+            
+            loading.style.display = 'block';
+            iframe.src = currentGame.html;
+            
+            // Hide loading after a short delay
+            setTimeout(() => {
+                loading.style.display = 'none';
+                document.getElementById('reload-btn').disabled = false;
+            }, 1000);
+        }
+        
+        // Open game in new tab
+        function openInNewTab() {
+            if (!currentGame) return;
+            window.open(currentGame.html, '_blank');
+        }
+        
+        // Reload current game
+        function reloadGame() {
+            if (!currentGame) return;
+            loadGame();
+        }
+        
+        // Event listeners
+        document.getElementById('load-btn').addEventListener('click', loadGame);
+        document.getElementById('new-tab-btn').addEventListener('click', openInNewTab);
+        document.getElementById('reload-btn').addEventListener('click', reloadGame);
+        
+        // Initialize on page load
+        loadManifest();
+    </script>
+</body>
+</html>

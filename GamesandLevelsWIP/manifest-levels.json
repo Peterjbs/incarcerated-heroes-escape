@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-12-08T02:12:37.634Z",
+  "games": [
+    {
+      "id": "2-word-anagram-solver",
+      "title": "2-Word Anagram Solver",
+      "js": "2-word-anagram-solver.js",
+      "html": "2-word-anagram-solver.html",
+      "readme": "2-word-anagram-solver.README.md",
+      "difficulty": "Easy-Medium",
+      "tags": ["word", "linguistic", "puzzle"]
+    },
+    {
+      "id": "4-digit-code-breaker",
+      "title": "4-Digit Code Breaker",
+      "js": "4-digit-code-breaker.js",
+      "html": "4-digit-code-breaker.html",
+      "readme": "4-digit-code-breaker.README.md",
+      "difficulty": "Easy",
+      "tags": ["logic", "deduction", "code-breaking"]
+    },
+    {
+      "id": "6-digit-timed-code-breaker",
+      "title": "6-Digit Timed Code Breaker",
+      "js": "6-digit-timed-code-breaker.js",
+      "html": "6-digit-timed-code-breaker.html",
+      "readme": "6-digit-timed-code-breaker.README.md",
+      "difficulty": "Medium-Hard",
+      "tags": ["logic", "timed", "code-breaking"]
+    },
+    {
+      "id": "checkpoint-extreme-maze",
+      "title": "Checkpoint Extreme Maze",
+      "js": "checkpoint-extreme-maze.js",
+      "html": "checkpoint-extreme-maze.html",
+      "readme": "checkpoint-extreme-maze.README.md",
+      "difficulty": "Very Hard",
+      "tags": ["navigation", "strategy", "advanced"]
+    },
+    {
+      "id": "enemy-patrol-maze",
+      "title": "Enemy Patrol Maze",
+      "js": "enemy-patrol-maze.js",
+      "html": "enemy-patrol-maze.html",
+      "readme": "enemy-patrol-maze.README.md",
+      "difficulty": "Hard",
+      "tags": ["stealth", "navigation", "canvas"]
+    },
+    {
+      "id": "gate-control-strategy-maze",
+      "title": "Gate Control Strategy Maze",
+      "js": "gate-control-strategy-maze.js",
+      "html": "gate-control-strategy-maze.html",
+      "readme": "gate-control-strategy-maze.README.md",
+      "difficulty": "Very Hard",
+      "tags": ["strategy", "puzzle", "npc"]
+    },
+    {
+      "id": "jigsaw-word-grid-5x5",
+      "title": "Jigsaw Word Grid 5×5",
+      "js": "jigsaw-word-grid-5x5.js",
+      "html": "jigsaw-word-grid-5x5.html",
+      "readme": "jigsaw-word-grid-5x5.README.md",
+      "difficulty": "Hard",
+      "tags": ["word", "spatial", "drag-drop"]
+    },
+    {
+      "id": "key-collection-map-nav",
+      "title": "Key Collection Map Navigation",
+      "js": "key-collection-map-nav.js",
+      "html": "key-collection-map-nav.html",
+      "readme": "key-collection-map-nav.README.md",
+      "difficulty": "Easy-Medium",
+      "tags": ["navigation", "collection", "grid"]
+    },
+    {
+      "id": "magic-square-9-grid",
+      "title": "Magic Square 9-Grid",
+      "js": "magic-square-9-grid.js",
+      "html": "magic-square-9-grid.html",
+      "readme": "magic-square-9-grid.README.md",
+      "difficulty": "Medium",
+      "tags": ["mathematical", "logic", "grid"]
+    },
+    {
+      "id": "sliding-tile-15-puzzle",
+      "title": "Sliding Tile 15-Puzzle",
+      "js": "sliding-tile-15-puzzle.js",
+      "html": "sliding-tile-15-puzzle.html",
+      "readme": "sliding-tile-15-puzzle.README.md",
+      "difficulty": "Medium",
+      "tags": ["spatial", "logic", "sliding-puzzle"]
+    }
+  ]
+}

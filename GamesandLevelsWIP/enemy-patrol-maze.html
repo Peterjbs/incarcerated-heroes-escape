@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enemy Patrol Maze - Test Wrapper</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body { padding: 20px; }
+        .wrapper-controls {
+            max-width: 900px; margin: 0 auto 20px; padding: 15px;
+            background: rgba(0, 0, 0, 0.3); border-radius: 8px; text-align: center;
+        }
+        .wrapper-controls h1 { color: var(--highlight-color); margin-bottom: 10px; font-size: 1.5rem; }
+        .wrapper-controls .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .wrapper-controls button {
+            padding: 10px 20px; background: var(--highlight-color); color: white;
+            border: none; border-radius: var(--border-radius); cursor: pointer;
+            font-size: 1rem; transition: var(--transition);
+        }
+        .wrapper-controls button:hover { background: #ff6b81; transform: translateY(-2px); }
+        .wrapper-info {
+            max-width: 900px; margin: 0 auto 20px; padding: 10px;
+            background: rgba(255, 193, 7, 0.2); border: 2px solid var(--warning-color);
+            border-radius: 8px; font-size: 0.9rem; display: none;
+        }
+        #game-root { min-height: 500px; }
+    </style>
+</head>
+<body>
+    <div class="wrapper-controls">
+        <h1>🎮 Enemy Patrol Maze</h1>
+        <p style="margin-bottom: 15px;">Test Wrapper - Standalone Mode (Canvas-based)</p>
+        <div class="btn-group">
+            <button onclick="startNewGame()">New Game</button>
+            <button onclick="resetGame()">Reset</button>
+            <button onclick="location.reload()">Reload Page</button>
+        </div>
+    </div>
+    
+    <div class="wrapper-info" id="wrapper-info">
+        ⚠️ <strong>Note:</strong> <span id="info-message"></span>
+    </div>
+    
+    <div id="game-root">
+        <div id="level-7"></div>
+    </div>
+    
+    <script src="enemy-patrol-maze.js"></script>
+    <script>
+        let gameInitialized = false;
+        let initFunction = null;
+        
+        function detectInitFunction() {
+            if (typeof window.initEnemyPatrolMaze === 'function') {
+                initFunction = window.initEnemyPatrolMaze;
+                return 'initEnemyPatrolMaze';
+            } else if (typeof window.setupEnemyPatrolMaze === 'function') {
+                initFunction = window.setupEnemyPatrolMaze;
+                return 'setupEnemyPatrolMaze';
+            } else if (typeof window.init === 'function') {
+                initFunction = window.init;
+                return 'init';
+            }
+            return null;
+        }
+        
+        function showInfo(message) {
+            document.getElementById('info-message').textContent = message;
+            document.getElementById('wrapper-info').style.display = 'block';
+        }
+        
+        function startNewGame() {
+            if (initFunction) {
+                try {
+                    initFunction();
+                    gameInitialized = true;
+                } catch (error) {
+                    console.error('Error starting game:', error);
+                    showInfo('Error starting game: ' + error.message);
+                }
+            } else {
+                showInfo('No valid initialization function found. Please check the per-game README for the correct entrypoint.');
+            }
+        }
+        
+        function resetGame() {
+            startNewGame();
+        }
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            const detectedFunc = detectInitFunction();
+            if (detectedFunc) {
+                console.log('Detected init function:', detectedFunc);
+                startNewGame();
+            } else {
+                showInfo('Could not find a compatible init function. Expected: initEnemyPatrolMaze, setupEnemyPatrolMaze, or init. Please refer to enemy-patrol-maze.README.md for integration details.');
+            }
+        });
+    </script>
+</body>
+</html>
