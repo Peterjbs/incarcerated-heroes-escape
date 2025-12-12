@@ -354,7 +354,7 @@ function generate36Levels(seed = 42) {
             gameType: game.type,
             difficulty: game.difficulty,
             variantIndex: variantIndex,
-            variantConfig: game.variantConfig[variantIndex],
+            variantConfig: game.variantConfigs[variantIndex],
             initFunction: game.initFunction,
             scriptPath: game.scriptPath,
             themeId: THEMES[levels.length % THEMES.length].id,
