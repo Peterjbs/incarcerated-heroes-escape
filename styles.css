@@ -194,9 +194,10 @@ body {
 
 /* Level Select */
 .level-select-content {
-    max-width: 900px;
+    max-width: 1400px;
     width: 100%;
     text-align: center;
+    padding: 20px;
 }
 
 .level-select-content h2 {
@@ -207,9 +208,34 @@ body {
 
 .level-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
     margin-bottom: 30px;
+}
+
+/* Responsive grid for smaller screens */
+@media (max-width: 1400px) {
+    .level-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 1100px) {
+    .level-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .level-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .level-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .level-card {
@@ -217,10 +243,14 @@ body {
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius);
-    padding: 30px 20px;
+    padding: 20px 15px;
     cursor: pointer;
     transition: var(--transition);
     position: relative;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .level-card:hover:not(.locked) {
@@ -240,14 +270,21 @@ body {
 }
 
 .level-number {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--highlight-color);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.level-code {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin: 5px 0;
+    font-family: 'Courier New', monospace;
 }
 
 .level-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-bottom: 10px;
     font-weight: 600;
 }
