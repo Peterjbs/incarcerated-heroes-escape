@@ -1,101 +1,55 @@
 // Game State Management
 const GameState = {
-    levels: [
-        {
-            id: 1,
-            title: "Code Breaker",
-            description: "Crack the 4-digit security code",
-            completed: false,
-            unlocked: true
-        },
-        {
-            id: 2,
-            title: "Anagram Solver",
-            description: "Rearrange letters into meaningful words",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 3,
-            title: "9-Number Grid",
-            description: "Arrange numbers 1-9 in the magic grid",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 4,
-            title: "Advanced Code Breaker",
-            description: "Master the enhanced codebreaking challenge",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 5,
-            title: "Jiggy Puzzle",
-            description: "Solve the sliding tile puzzle",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 6,
-            title: "Map Navigation",
-            description: "Find the path through the treacherous map",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 7,
-            title: "Pathfinder Challenge",
-            description: "Navigate the complex pathfinding maze",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 8,
-            title: "Pathfinder Extreme",
-            description: "Master the ultimate pathfinding test",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 9,
-            title: "Gate Master Maze",
-            description: "Lock and unlock gates to escape the final labyrinth",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 10,
-            title: "Word Grid Challenge",
-            description: "Solve jigsaw-styled 5×5 word puzzles",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 11,
-            title: "CCTV Security Breach",
-            description: "Hack the security system and guide your comrade",
-            completed: false,
-            unlocked: false
-        },
-        {
-            id: 12,
-            title: "Vital Signs Subterfuge",
-            description: "Extract trackers and deceive surveillance",
-            completed: false,
-            unlocked: false
-        }
-    ],
-    currentLevel: null
+    levels: [], // Will be populated dynamically from level generator
+    currentLevel: null,
+    generatedLevels: null // Cache for generated levels
 };
+
+// Initialize 36 dynamic levels
+function initializeLevels() {
+    // Generate or retrieve cached levels
+    if (!GameState.generatedLevels) {
+        const seed = 42; // Fixed seed for consistent generation
+        GameState.generatedLevels = window.LevelGenerator.generate36Levels(seed);
+    }
+    
+    // Convert generated levels to GameState format
+    GameState.levels = GameState.generatedLevels.map((genLevel, index) => ({
+        id: genLevel.id,
+        code: genLevel.code,
+        title: genLevel.baseGameName,
+        description: `${genLevel.gameType} challenge - ${genLevel.difficulty}`,
+        completed: false,
+        unlocked: true, // All levels unlocked per requirements
+        baseGameId: genLevel.baseGameId,
+        variantIndex: genLevel.variantIndex,
+        variantConfig: genLevel.variantConfig,
+        initFunction: genLevel.initFunction,
+        themeId: genLevel.themeId,
+        seed: genLevel.seed,
+        slotIndex: index
+    }));
+}
 
 // Load game state from localStorage
 function loadGameState() {
+    // Initialize levels first
+    initializeLevels();
+    
     const saved = localStorage.getItem('gameState');
     if (saved) {
         try {
             const savedState = JSON.parse(saved);
-            GameState.levels = savedState.levels || GameState.levels;
+            // Merge saved completion/unlock state with generated levels
+            if (savedState.levels && savedState.levels.length === GameState.levels.length) {
+                savedState.levels.forEach((savedLevel, index) => {
+                    if (GameState.levels[index]) {
+                        GameState.levels[index].completed = savedLevel.completed || false;
+                        // Keep all unlocked per requirements
+                        GameState.levels[index].unlocked = true;
+                    }
+                });
+            }
         } catch (e) {
             console.error('Error loading game state:', e);
         }
@@ -114,9 +68,9 @@ function saveGameState() {
 // Reset all progress
 function resetProgress() {
     if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
-        GameState.levels.forEach((level, index) => {
+        GameState.levels.forEach((level) => {
             level.completed = false;
-            level.unlocked = index === 0;
+            level.unlocked = true; // All levels remain unlocked
         });
         saveGameState();
         renderLevelSelect();
@@ -154,7 +108,7 @@ function showScreen(screenId) {
     }
 }
 
-// Render level select grid
+// Render level select grid (6x6 = 36 levels)
 function renderLevelSelect() {
     const grid = document.getElementById('level-grid');
     if (!grid) return;
@@ -172,14 +126,22 @@ function renderLevelSelect() {
             card.classList.add('locked');
         }
         
+        // Apply theme colors as data attribute for styling
+        card.setAttribute('data-theme', level.themeId);
+        
         const status = level.completed ? '✓' : (level.unlocked ? '○' : '🔒');
+        const theme = window.LevelGenerator.getTheme(level.themeId);
         
         card.innerHTML = `
             <div class="level-status">${status}</div>
             <div class="level-number">Level ${level.id}</div>
+            <div class="level-code" style="font-size: 0.7rem; opacity: 0.7; margin-top: 5px;">${level.code}</div>
             <div class="level-title">${level.title}</div>
             <div class="level-description">${level.description}</div>
         `;
+        
+        // Apply theme accent color to card
+        card.style.borderLeft = `4px solid ${theme.highlight}`;
         
         if (level.unlocked) {
             card.addEventListener('click', () => startLevel(level.id));
@@ -196,10 +158,39 @@ function startLevel(levelId) {
     
     GameState.currentLevel = levelId;
     
-    // Initialize the level
-    const levelInitFunction = window[`initLevel${levelId}`];
+    // Get the container for this level
+    const container = document.getElementById(`level-${levelId}`);
+    if (!container) {
+        console.error(`Level container not found: level-${levelId}`);
+        return;
+    }
+    
+    // Store level config and theme in window for access by init functions
+    window.currentLevelConfig = {
+        id: level.id,
+        code: level.code,
+        variantConfig: level.variantConfig,
+        seed: level.seed,
+        themeId: level.themeId,
+        slotIndex: level.slotIndex
+    };
+    
+    // Apply theme to the level container
+    window.LevelGenerator.applyTheme(`level-${levelId}`, level.themeId);
+    
+    // Initialize the level using the init function from the base game
+    const levelInitFunction = window[level.initFunction];
     if (typeof levelInitFunction === 'function') {
-        levelInitFunction();
+        // Pass the level container ID to the init function
+        // The init functions will need to be updated to use this ID
+        levelInitFunction(levelId);
+    } else {
+        console.error(`Init function not found: ${level.initFunction}`);
+        // Fallback to old level function if available
+        const fallbackFunction = window[`initLevel${levelId}`];
+        if (typeof fallbackFunction === 'function') {
+            fallbackFunction();
+        }
     }
     
     showScreen(`level-${levelId}`);
@@ -212,13 +203,7 @@ function completeLevel(levelId) {
     
     level.completed = true;
     
-    // Unlock next level
-    if (levelId < GameState.levels.length) {
-        const nextLevel = GameState.levels.find(l => l.id === levelId + 1);
-        if (nextLevel) {
-            nextLevel.unlocked = true;
-        }
-    }
+    // All levels remain unlocked per requirements
     
     saveGameState();
     

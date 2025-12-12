@@ -15,8 +15,8 @@
                 <h2 class="game-subtitle">Labyrinth Escape</h2>
                 <p class="game-intro">
                     You are part of a band of incarcerated heroes trapped in a dystopian labyrinth.
-                    Solve puzzles, crack codes, and navigate treacherous paths to escape back to Earth
-                    and build a new home for humanity.
+                    Solve puzzles, crack codes, and navigate treacherous paths across 36 unique challenges
+                    to escape back to Earth and build a new home for humanity.
                 </p>
                 <div class="menu-buttons">
                     <button onclick="showScreen('level-select')" class="btn btn-primary">Start Game</button>
@@ -44,26 +44,41 @@
                 <h2>How to Play</h2>
                 <div class="instruction-section">
                     <h3>Objective</h3>
-                    <p>Complete all 10 puzzle challenges to escape the labyrinth and return to Earth.</p>
+                    <p>Complete puzzle challenges across 36 unique levels to escape the labyrinth and return to Earth.</p>
                 </div>
                 <div class="instruction-section">
                     <h3>Game Progression</h3>
-                    <p>Levels unlock sequentially as you complete each puzzle. Your progress is automatically saved.</p>
+                    <p>All 36 levels are unlocked from the start! Choose any level in any order. Each level displays a unique code (e.g., CB4-V0-S00-42) that identifies the minigame type, variant, and configuration. Your progress is automatically saved.</p>
                 </div>
                 <div class="instruction-section">
-                    <h3>The Challenges</h3>
+                    <h3>The 10 Minigame Types</h3>
                     <ol>
-                        <li><strong>Code Breaker</strong> - Crack the 4-digit security code</li>
-                        <li><strong>Anagram Solver</strong> - Rearrange letters into meaningful words</li>
-                        <li><strong>9-Number Grid</strong> - Arrange numbers 1-9 in the magic grid</li>
-                        <li><strong>Advanced Code Breaker</strong> - Master the enhanced codebreaking challenge</li>
-                        <li><strong>Jiggy Puzzle</strong> - Solve the sliding tile puzzle</li>
-                        <li><strong>Map Navigation</strong> - Find the path through the treacherous map</li>
-                        <li><strong>Pathfinder Challenge</strong> - Navigate the complex pathfinding maze</li>
-                        <li><strong>Pathfinder Extreme</strong> - Master the ultimate pathfinding test</li>
-                        <li><strong>Gate Master Maze</strong> - Lock and unlock gates to escape the final labyrinth</li>
-                        <li><strong>Word Grid Challenge</strong> - Solve jigsaw-styled 5×5 word puzzles with drag-and-drop tiles</li>
+                        <li><strong>4-Digit Code Breaker (CB4)</strong> - Crack security codes with logic and deduction</li>
+                        <li><strong>2-Word Anagram Solver (AN2)</strong> - Unscramble adjective-noun pairs</li>
+                        <li><strong>Magic Square 9-Grid (MS9)</strong> - Arrange numbers 1-9 to sum to 15</li>
+                        <li><strong>6-Digit Timed Code Breaker (CB6)</strong> - Race against time to crack codes</li>
+                        <li><strong>Sliding Tile 15-Puzzle (ST15)</strong> - Solve the classic sliding puzzle</li>
+                        <li><strong>Key Collection Map Nav (KCM)</strong> - Navigate maps and collect keys</li>
+                        <li><strong>Enemy Patrol Maze (EPM)</strong> - Avoid enemies in stealth mazes</li>
+                        <li><strong>Checkpoint Extreme Maze (CEM)</strong> - Advanced navigation with checkpoints</li>
+                        <li><strong>Gate Control Strategy (GCS)</strong> - Control gates to guide allies and trap enemies</li>
+                        <li><strong>Jigsaw Word Grid 5×5 (JWG)</strong> - Solve crossword puzzles with shaped tiles</li>
                     </ol>
+                </div>
+                <div class="instruction-section">
+                    <h3>Level Codes</h3>
+                    <p>Each level displays a unique code like <code>CB4-V0-S00-42</code> which tells you:</p>
+                    <ul>
+                        <li><strong>CB4</strong> - Game type (4-Digit Code Breaker)</li>
+                        <li><strong>V0</strong> - Variant index (different difficulty/configuration)</li>
+                        <li><strong>S00</strong> - Slot position in the 36-level grid</li>
+                        <li><strong>42</strong> - Random seed for reproducibility</li>
+                    </ul>
+                    <p>Report level codes when sharing strategies or reporting issues!</p>
+                </div>
+                <div class="instruction-section">
+                    <h3>Themes</h3>
+                    <p>Each level has a unique visual theme with different colors and styling. Themes are assigned deterministically based on the level code, so the same level always looks the same.</p>
                 </div>
                 <button onclick="showScreen('main-menu')" class="btn btn-back">Back to Menu</button>
             </div>
@@ -107,7 +122,7 @@
             </div>
         </div>
 
-        <!-- Game Levels (will be loaded dynamically) -->
+        <!-- Game Levels (will be loaded dynamically) - 36 levels -->
         <div id="level-1" class="screen level-screen"></div>
         <div id="level-2" class="screen level-screen"></div>
         <div id="level-3" class="screen level-screen"></div>
@@ -118,18 +133,48 @@
         <div id="level-8" class="screen level-screen"></div>
         <div id="level-9" class="screen level-screen"></div>
         <div id="level-10" class="screen level-screen"></div>
+        <div id="level-11" class="screen level-screen"></div>
+        <div id="level-12" class="screen level-screen"></div>
+        <div id="level-13" class="screen level-screen"></div>
+        <div id="level-14" class="screen level-screen"></div>
+        <div id="level-15" class="screen level-screen"></div>
+        <div id="level-16" class="screen level-screen"></div>
+        <div id="level-17" class="screen level-screen"></div>
+        <div id="level-18" class="screen level-screen"></div>
+        <div id="level-19" class="screen level-screen"></div>
+        <div id="level-20" class="screen level-screen"></div>
+        <div id="level-21" class="screen level-screen"></div>
+        <div id="level-22" class="screen level-screen"></div>
+        <div id="level-23" class="screen level-screen"></div>
+        <div id="level-24" class="screen level-screen"></div>
+        <div id="level-25" class="screen level-screen"></div>
+        <div id="level-26" class="screen level-screen"></div>
+        <div id="level-27" class="screen level-screen"></div>
+        <div id="level-28" class="screen level-screen"></div>
+        <div id="level-29" class="screen level-screen"></div>
+        <div id="level-30" class="screen level-screen"></div>
+        <div id="level-31" class="screen level-screen"></div>
+        <div id="level-32" class="screen level-screen"></div>
+        <div id="level-33" class="screen level-screen"></div>
+        <div id="level-34" class="screen level-screen"></div>
+        <div id="level-35" class="screen level-screen"></div>
+        <div id="level-36" class="screen level-screen"></div>
     </div>
 
+    <script src="level-generator.js"></script>
+    <script src="level-adapter.js"></script>
     <script src="game.js"></script>
-    <script src="levels/level1.js"></script>
-    <script src="levels/level2.js"></script>
-    <script src="levels/level3.js"></script>
-    <script src="levels/level4.js"></script>
-    <script src="levels/level5.js"></script>
-    <script src="levels/level6.js"></script>
-    <script src="levels/level7.js"></script>
-    <script src="levels/level8.js"></script>
-    <script src="levels/vital_signs.js"></script>
-    <script src="levels/level10.js"></script>
+    
+    <!-- Load refactored minigame scripts -->
+    <script src="GamesandLevelsWIP/4-digit-code-breaker.js"></script>
+    <script src="GamesandLevelsWIP/2-word-anagram-solver.js"></script>
+    <script src="GamesandLevelsWIP/magic-square-9-grid.js"></script>
+    <script src="GamesandLevelsWIP/6-digit-timed-code-breaker.js"></script>
+    <script src="GamesandLevelsWIP/sliding-tile-15-puzzle.js"></script>
+    <script src="GamesandLevelsWIP/key-collection-map-nav.js"></script>
+    <script src="GamesandLevelsWIP/enemy-patrol-maze.js"></script>
+    <script src="GamesandLevelsWIP/checkpoint-extreme-maze.js"></script>
+    <script src="GamesandLevelsWIP/gate-control-strategy-maze.js"></script>
+    <script src="GamesandLevelsWIP/jigsaw-word-grid-5x5.js"></script>
 </body>
 </html>
